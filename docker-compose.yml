@@ -1,0 +1,250 @@
+version: '3.8'
+
+services:
+
+  # Bases de datos
+  db-pacientes:
+    image: mysql:8.0
+    container_name: db-pacientes
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: paciente_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - datos-pacientes:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  db-agenda:
+    image: mysql:8.0
+    container_name: db-agenda
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: agenda_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - datos-agenda:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  db-resultados:
+    image: mysql:8.0
+    container_name: db-resultados
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: resultados_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - datos-resultados:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  db-notificaciones:
+    image: mysql:8.0
+    container_name: db-notificaciones
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: notificaciones_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - datos-notificaciones:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  db-auth:
+    image: mysql:8.0
+    container_name: db-auth
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: auth_db
+    ports:
+      - "3311:3306"
+    volumes:
+      - datos-auth:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  db-facturacion:
+    image: mysql:8.0
+    container_name: db-facturacion
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: facturacion_db
+    ports:
+      - "3312:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - datos-facturacion:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  # Servicios
+  servicio-pacientes:
+    build: ./servicio-pacientes
+    container_name: servicio-pacientes
+    env_file:
+      - ./servicio-pacientes/.env
+    depends_on:
+      db-pacientes:
+        condition: service_healthy
+    restart: on-failure
+
+  servicio-agenda:
+    build: ./servicio-agenda
+    container_name: servicio-agenda
+    env_file:
+      - ./servicio-agenda/.env
+    depends_on:
+      db-agenda:
+        condition: service_healthy
+      servicio-pacientes:
+        condition: service_started
+    restart: on-failure
+
+  servicio-resultados:
+    build: ./servicio-resultados
+    container_name: servicio-resultados
+    env_file:
+      - ./servicio-resultados/.env
+    volumes:
+      - uploads-resultados:/app/uploads
+    depends_on:
+      db-resultados:
+        condition: service_healthy
+      servicio-agenda:
+        condition: service_started
+      redis:
+        condition: service_started
+    restart: on-failure
+
+  servicio-notificaciones:
+    build: ./servicio-notificaciones
+    container_name: servicio-notificaciones
+    env_file:
+      - ./servicio-notificaciones/.env
+    depends_on:
+      db-notificaciones:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    restart: on-failure
+
+  servicio-auth:
+    build: ./servicio-auth
+    container_name: servicio-auth
+    env_file:
+      - ./servicio-auth/.env
+    depends_on:
+      db-auth:
+        condition: service_healthy
+    restart: on-failure
+
+  servicio-facturacion:
+    build: ./servicio-facturacion
+    container_name: servicio-facturacion
+    env_file:
+      - ./servicio-facturacion/.env
+    ports:
+      - "3006:3006"
+    volumes:
+      - ./facturas_data:/app/facturas
+    depends_on:
+      db-facturacion:
+        condition: service_healthy
+      servicio-agenda:
+        condition: service_started
+    restart: on-failure
+
+  # Redis y RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin1234
+    restart: on-failure
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+  # API Gateway
+  gateway:
+    image: nginx:alpine
+    container_name: api-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - servicio-pacientes
+      - servicio-agenda
+      - servicio-resultados
+      - servicio-notificaciones
+      - servicio-facturacion
+    restart: on-failure
+
+  # Frontend
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    command: >
+      sh -c "echo 'server { listen 80; location / { root /usr/share/nginx/html; index login.html; try_files $$uri $$uri/ /login.html; } }' > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOSTS: db-pacientes,db-agenda,db-resultados,db-notificaciones,db-auth,db-facturacion
+      PMA_USER: root
+      PMA_PASSWORD: root1234
+    depends_on:
+      - db-pacientes
+      - db-agenda
+      - db-resultados
+      - db-notificaciones
+      - db-facturacion
+
+# Volúmenes
+volumes:
+  datos-pacientes:
+  datos-agenda:
+  datos-resultados:
+  datos-notificaciones:
+  datos-auth:
+  datos-facturacion:
+  uploads-resultados:

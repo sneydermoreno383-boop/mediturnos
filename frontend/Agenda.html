@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediTurnos — Agenda</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; }
+        header { background: #1a73e8; color: white; padding: 20px; text-align: center; }
+        header h1 { font-size: 28px; }
+        header p { font-size: 14px; margin-top: 5px; opacity: 0.85; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { color: #1a73e8; margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .form-group select:disabled { background: #f5f5f5; color: #aaa; cursor: not-allowed; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button { background: #1a73e8; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; margin-top: 5px; }
+        button:hover { background: #1557b0; }
+        button.secundario { background: #34a853; }
+        button.secundario:hover { background: #2d8f47; }
+        .mensaje { padding: 12px; border-radius: 5px; margin-top: 15px; font-size: 14px; display: none; }
+        .mensaje.exito { background: #e6f4ea; color: #2d8f47; border: 1px solid #34a853; }
+        .mensaje.error { background: #fce8e6; color: #c5221f; border: 1px solid #ea4335; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+        table th { background: #1a73e8; color: white; padding: 10px; text-align: left; }
+        table td { padding: 10px; border-bottom: 1px solid #eee; }
+        table tr:hover { background: #f8f9fa; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge.pendiente { background: #fff3cd; color: #856404; }
+        .badge.confirmado { background: #d1e7dd; color: #0f5132; }
+        .badge.cancelado { background: #f8d7da; color: #842029; }
+        .badge.completado { background: #e2e3e5; color: #41464b; }
+        .status-bar { display: flex; gap: 10px; margin-bottom: 25px; }
+        .status-item { flex: 1; background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .status-item .dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 8px; }
+        .status-item .dot.activo { background: #34a853; }
+        .status-item span { font-size: 13px; font-weight: bold; }
+        .seccion-titulo { font-size: 22px; font-weight: bold; color: #1a73e8; margin: 30px 0 10px; border-left: 4px solid #1a73e8; padding-left: 10px; }
+        .nav-back { display: inline-block; margin-bottom: 20px; color: #1a73e8; font-size: 14px; text-decoration: none; }
+        .nav-back:hover { text-decoration: underline; }
+        .select-hint { font-size: 12px; color: #888; margin-top: 4px; display: none; }
+        .select-hint.visible { display: block; }
+        .clinica-seleccionada { display: none; background: #e8f0fe; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 14px; color: #1a73e8; border-left: 4px solid #1a73e8; }
+        .clinica-seleccionada.visible { display: block; }
+        .disp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .disp-stat { background: #e8f0fe; border-radius: 8px; padding: 14px; text-align: center; }
+        .disp-stat .valor { font-size: 22px; font-weight: bold; color: #1a73e8; }
+        .disp-stat .etiqueta { font-size: 11px; color: #555; margin-top: 4px; }
+        .insumo-aviso { background: #fff3cd; border: 1px solid #ffc107; border-radius: 5px; padding: 10px 15px; margin-bottom: 16px; font-size: 13px; color: #856404; display: none; }
+        .leyenda { display: flex; gap: 20px; align-items: center; margin-bottom: 14px; font-size: 13px; color: #555; }
+        .leyenda-item { display: flex; align-items: center; gap: 8px; }
+        .leyenda-dot { width: 14px; height: 14px; border-radius: 3px; }
+        .leyenda-dot.libre { background: #34a853; }
+        .leyenda-dot.ocupado { background: #bdbdbd; }
+        .disp-seccion { margin-top: 24px; }
+        .disp-seccion-titulo { font-size: 14px; font-weight: bold; color: #555; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 2px solid #e8f0fe; }
+        .recurso-bloque { margin-bottom: 20px; }
+        .recurso-header { display: flex; align-items: center; gap: 12px; border-radius: 8px; padding: 10px 16px; margin-bottom: 12px; }
+        .recurso-header.profesional { background: #e8f0fe; }
+        .recurso-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; color: white; }
+        .recurso-avatar.profesional { background: #1a73e8; }
+        .recurso-nombre { font-size: 14px; font-weight: bold; color: #1a73e8; }
+        .recurso-subtitulo { font-size: 12px; color: #555; margin-top: 2px; }
+        .recurso-libre-count { margin-left: auto; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: bold; color: white; }
+        .recurso-libre-count.con-horarios { background: #34a853; }
+        .recurso-libre-count.sin-horarios { background: #bdbdbd; }
+        .horarios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+        .horario-slot { border-radius: 7px; padding: 10px 8px; text-align: center; border: 2px solid; transition: transform 0.1s, box-shadow 0.1s; }
+        .horario-slot.libre { background: #e6f4ea; border-color: #34a853; color: #1b5e20; cursor: pointer; }
+        .horario-slot.libre:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(52,168,83,0.3); }
+        .horario-slot.libre.seleccionado { background: #1a73e8; border-color: #1557b0; color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(26,115,232,0.4); }
+        .horario-slot.libre.seleccionado .slot-estado { color: rgba(255,255,255,0.8); }
+        .horario-slot.ocupado { background: #f5f5f5; border-color: #bdbdbd; color: #9e9e9e; cursor: not-allowed; }
+        .slot-icono { font-size: 14px; margin-bottom: 4px; }
+        .slot-estado { font-size: 10px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+        .horario-slot.libre .slot-estado { color: #34a853; }
+        .horario-slot.ocupado .slot-estado { color: #bdbdbd; }
+        .slot-horas { font-size: 13px; font-weight: bold; }
+        .slot-tipo { font-size: 10px; margin-top: 3px; opacity: 0.7; }
+        .panel-confirmacion { display: none; background: #f8f9ff; border: 2px solid #1a73e8; border-radius: 10px; padding: 20px; margin-top: 20px; }
+        .panel-confirmacion.visible { display: block; }
+        .panel-confirmacion h3 { color: #1a73e8; font-size: 16px; margin-bottom: 16px; }
+        .panel-resumen { background: #e8f0fe; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; line-height: 2; }
+        .panel-resumen strong { color: #1a73e8; }
+        .panel-recursos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+        .panel-recurso-group label { font-size: 13px; font-weight: bold; color: #555; display: block; margin-bottom: 5px; }
+        .panel-recurso-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .panel-acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-cancelar-panel { background: #ea4335; }
+        .btn-cancelar-panel:hover { background: #c5221f; }
+        .btn-cancelar-turno { background: #ea4335; width: auto; padding: 6px 14px; font-size: 12px; margin-top: 0; }
+        .btn-cancelar-turno:hover { background: #c5221f; }
+        .btn-resultado { background: #f57c00; width: auto; padding: 6px 14px; font-size: 12px; margin-top: 0; }
+        .btn-resultado:hover { background: #e65100; }
+        .medico-banner { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; font-size: 14px; }
+        .medico-banner strong { font-size: 16px; display: block; margin-bottom: 4px; }
+        #seccion-disponibilidad { display: block; }
+        #card-disponibilidad { display: block; }
+    </style>
+    <script src="auth.js"></script>
+</head>
+<body>
+    <header>
+        <h1>MediTurnos — Agenda</h1>
+        <p>Gestión de turnos médicos · Disponibilidad en tiempo real · Reglas de negocio</p>
+    </header>
+
+    <div class="container">
+
+        <a class="nav-back" href="index.html">← Volver al sistema principal</a>
+
+        <div class="status-bar">
+            <div class="status-item"><span><span class="dot" id="dot-gateway"></span>API Gateway</span></div>
+            <div class="status-item"><span><span class="dot" id="dot-pacientes"></span>Pacientes</span></div>
+            <div class="status-item"><span><span class="dot" id="dot-agenda"></span>Agenda</span></div>
+        </div>
+
+        <!-- Banner solo para médicos -->
+        <div class="medico-banner" id="medico-banner" style="display:none;">
+            <strong id="medico-banner-nombre"></strong>
+            Solo ves tus propios turnos. Para cargar un resultado, hacé clic en "Cargar resultado" en el turno correspondiente.
+        </div>
+
+        <!-- Sección disponibilidad — se oculta para médicos -->
+        <div id="seccion-disponibilidad">
+            <div class="seccion-titulo">Consultar Disponibilidad</div>
+            <div id="card-disponibilidad" class="card">
+                <h2>Disponibilidad de médicos en tiempo real</h2>
+
+                <div class="form-group">
+                    <label>Clínica</label>
+                    <select id="disp-clinica" onchange="onCambioClinica()">
+                        <option value="">Cargando clínicas...</option>
+                    </select>
+                </div>
+
+                <div class="clinica-seleccionada" id="clinica-seleccionada-info"></div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Especialidad</label>
+                        <select id="disp-especialidad" onchange="filtrarEstudiosDisp()" disabled>
+                            <option value="">— Primero elegí una clínica —</option>
+                        </select>
+                        <div class="select-hint visible" id="hint-esp">Seleccioná primero una clínica</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de estudio</label>
+                        <select id="disp-tipo" disabled>
+                            <option value="">— Primero elegí una especialidad —</option>
+                        </select>
+                        <div class="select-hint visible" id="hint-disp">Seleccioná primero una especialidad</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="disp-fecha">
+                </div>
+
+                <button onclick="consultarDisponibilidad()">Ver disponibilidad</button>
+                <div class="mensaje" id="msg-disponibilidad"></div>
+
+                <div id="resultado-disponibilidad" style="display:none; margin-top:24px;">
+                    <div class="disp-stats">
+                        <div class="disp-stat"><div class="valor" id="disp-duracion">—</div><div class="etiqueta">Duración (min)</div></div>
+                        <div class="disp-stat"><div class="valor" id="disp-preparacion">—</div><div class="etiqueta">Preparación (min)</div></div>
+                        <div class="disp-stat"><div class="valor" id="disp-medicos">—</div><div class="etiqueta">Médicos disponibles</div></div>
+                        <div class="disp-stat"><div class="valor" id="disp-stock">—</div><div class="etiqueta">Stock insumo</div></div>
+                    </div>
+
+                    <div class="insumo-aviso" id="insumo-aviso">
+                        Requiere insumo especial: <strong id="insumo-nombre"></strong> &nbsp;·&nbsp; Stock: <strong id="insumo-stock-detalle"></strong>
+                    </div>
+
+                    <div class="leyenda">
+                        <div class="leyenda-item"><div class="leyenda-dot libre"></div> Disponible — hacé clic para seleccionar</div>
+                        <div class="leyenda-item"><div class="leyenda-dot ocupado"></div> Ocupado</div>
+                    </div>
+
+                    <div class="disp-seccion">
+                        <div class="disp-seccion-titulo">Médicos — seleccioná un horario</div>
+                        <div id="bloques-profesionales"></div>
+                    </div>
+
+                    <div class="panel-confirmacion" id="panel-confirmacion">
+                        <h3>Completá el turno</h3>
+                        <div class="panel-resumen" id="panel-resumen"></div>
+                        <div class="panel-recursos">
+                            <div class="panel-recurso-group">
+                                <label>Consultorio disponible</label>
+                                <select id="select-consultorio"><option value="">Cargando...</option></select>
+                            </div>
+                            <div class="panel-recurso-group" id="grupo-equipo">
+                                <label>Equipo disponible</label>
+                                <select id="select-equipo"><option value="">No requerido</option></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Número de documento del paciente</label>
+                            <div style="display:flex;gap:10px;">
+                                <input type="text" id="doc-buscar-panel" placeholder="Escribe el documento">
+                                <button onclick="buscarPacientePanel()" style="width:auto;padding:10px 20px;margin-top:0;">Buscar</button>
+                            </div>
+                        </div>
+                        <div id="resultado-busqueda-panel" style="display:none;background:#e8f0fe;border-radius:5px;padding:10px;margin-bottom:12px;font-size:13px;">
+                            ✓ <strong id="nombre-paciente-panel"></strong>
+                            <input type="hidden" id="id-paciente-panel">
+                        </div>
+
+                        <div class="form-group">
+                            <label>EPS / Obra Social</label>
+                            <select id="obra-social-panel">
+                                <option value="">Particular</option>
+                                <option value="Sura EPS">Sura EPS</option>
+                                <option value="Sanitas EPS">Sanitas EPS</option>
+                                <option value="Nueva EPS">Nueva EPS</option>
+                                <option value="Compensar EPS">Compensar EPS</option>
+                                <option value="Famisanar EPS">Famisanar EPS</option>
+                                <option value="Coosalud EPS">Coosalud EPS</option>
+                                <option value="Medimas EPS">Medimas EPS</option>
+                            </select>
+                        </div>
+
+                        <div class="mensaje" id="msg-panel"></div>
+                        <div class="panel-acciones">
+                            <button onclick="confirmarTurnoDesdePanel()">Confirmar turno</button>
+                            <button class="btn-cancelar-panel" onclick="cerrarPanel()">✕ Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="seccion-titulo" id="titulo-turnos">Turnos Agendados</div>
+
+        <div class="card">
+            <h2 id="subtitulo-turnos">Listado de Turnos</h2>
+            <button class="secundario" onclick="cargarTurnos()">Actualizar lista</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Turno</th>
+                        <th>Paciente</th>
+                        <th>Tipo de estudio</th>
+                        <th>Especialidad</th>
+                        <th>Fecha</th>
+                        <th>Inicio → Fin</th>
+                        <th>Duración</th>
+                        <th>EPS</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-turnos">
+                    <tr><td colspan="10" style="text-align:center;color:#999;">Haz clic en Actualizar lista</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        const usuarioActual = Auth.verificar(['admin', 'medico']);
+        Auth.inyectarHeader('Agenda');
+        Auth.aplicarPermisos(usuarioActual);
+
+        const esMedico = usuarioActual.rol === 'medico';
+
+        if (esMedico) {
+            // Ocultar sección de disponibilidad completa
+            document.getElementById('seccion-disponibilidad').style.display = 'none';
+
+            // Mostrar banner
+            document.getElementById('medico-banner').style.display = 'block';
+            document.getElementById('medico-banner-nombre').textContent =
+                `Dr/a. ${usuarioActual.nombre} ${usuarioActual.apellido} — Solo tus turnos`;
+
+            // Cambiar títulos
+            document.getElementById('titulo-turnos').textContent   = 'Mis Turnos';
+            document.getElementById('subtitulo-turnos').textContent = 'Mis pacientes agendados';
+        }
+
+        const GATEWAY = 'http://localhost:80';
+        let datosDisponibilidad = null;
+        let slotSeleccionado    = null;
+
+        const ESTUDIOS_POR_ESPECIALIDAD = {
+            'Cardiología':      [{ v: 'electrocardiograma', l: 'Electrocardiograma (20 min)' }, { v: 'resonancia', l: 'Resonancia (60 min)' }],
+            'Dermatología':     [{ v: 'ecografia', l: 'Ecografía (30 min)' }],
+            'Neurología':       [{ v: 'resonancia', l: 'Resonancia (60 min)' }, { v: 'tomografia', l: 'Tomografía (45 min)' }],
+            'Pediatría':        [{ v: 'radiografia', l: 'Radiografía (15 min)' }, { v: 'ecografia', l: 'Ecografía (30 min)' }, { v: 'laboratorio', l: 'Laboratorio (15 min)' }],
+            'Traumatología':    [{ v: 'radiografia', l: 'Radiografía (15 min)' }, { v: 'tomografia', l: 'Tomografía (45 min)' }, { v: 'resonancia', l: 'Resonancia (60 min)' }],
+            'Oftalmología':     [{ v: 'ecografia', l: 'Ecografía (30 min)' }],
+            'Ginecología':      [{ v: 'ecografia', l: 'Ecografía (30 min)' }, { v: 'mamografia', l: 'Mamografía (25 min)' }],
+            'Urología':         [{ v: 'ecografia', l: 'Ecografía (30 min)' }, { v: 'tomografia', l: 'Tomografía (45 min)' }],
+            'Psiquiatría':      [{ v: 'resonancia', l: 'Resonancia (60 min)' }, { v: 'electrocardiograma', l: 'Electrocardiograma (20 min)' }],
+            'Medicina General': [{ v: 'laboratorio', l: 'Laboratorio (15 min)' }, { v: 'radiografia', l: 'Radiografía (15 min)' }, { v: 'ecografia', l: 'Ecografía (30 min)' }, { v: 'electrocardiograma', l: 'Electrocardiograma (20 min)' }],
+        };
+
+        const setFechaMinima = () => {
+            const ahoraColombia = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+            const fechaHoy      = ahoraColombia.toISOString().split('T')[0];
+            document.getElementById('disp-fecha').min   = fechaHoy;
+            document.getElementById('disp-fecha').value = fechaHoy;
+        };
+
+        const cargarClinicas = async () => {
+            try {
+                const res      = await fetch(`${GATEWAY}/api/v1/clinicas`);
+                const clinicas = await res.json();
+                const sel      = document.getElementById('disp-clinica');
+                sel.innerHTML  = '<option value="">Seleccioná una clínica</option>' +
+                    clinicas.map(c => `<option value="${c.id_clinica}">${c.nombre} — ${c.ciudad}</option>`).join('');
+            } catch {
+                document.getElementById('disp-clinica').innerHTML = '<option value="">Error al cargar clínicas</option>';
+            }
+        };
+
+        const onCambioClinica = () => {
+            const sel     = document.getElementById('disp-clinica');
+            const id      = sel.value;
+            const texto   = sel.options[sel.selectedIndex]?.text || '';
+            const infoBox = document.getElementById('clinica-seleccionada-info');
+            const selEsp  = document.getElementById('disp-especialidad');
+            const hintEsp = document.getElementById('hint-esp');
+
+            document.getElementById('resultado-disponibilidad').style.display = 'none';
+            cerrarPanel();
+
+            if (!id) {
+                infoBox.classList.remove('visible');
+                selEsp.innerHTML = '<option value="">— Primero elegí una clínica —</option>';
+                selEsp.disabled  = true;
+                hintEsp.classList.add('visible');
+                return;
+            }
+
+            infoBox.textContent = texto;
+            infoBox.classList.add('visible');
+            selEsp.innerHTML = '<option value="">Todas las especialidades</option>' +
+                Object.keys(ESTUDIOS_POR_ESPECIALIDAD).map(e => `<option value="${e}">${e}</option>`).join('');
+            selEsp.disabled = false;
+            hintEsp.classList.remove('visible');
+            document.getElementById('disp-tipo').innerHTML = '<option value="">— Primero elegí una especialidad —</option>';
+            document.getElementById('disp-tipo').disabled  = true;
+            document.getElementById('hint-disp').classList.add('visible');
+        };
+
+        const filtrarEstudiosDisp = () => {
+            const esp     = document.getElementById('disp-especialidad').value;
+            const selTipo = document.getElementById('disp-tipo');
+            const hint    = document.getElementById('hint-disp');
+            if (!esp) {
+                selTipo.innerHTML = '<option value="">— Primero elegí una especialidad —</option>';
+                selTipo.disabled  = true;
+                hint.classList.add('visible');
+                return;
+            }
+            const estudios = ESTUDIOS_POR_ESPECIALIDAD[esp] || [];
+            selTipo.innerHTML = '<option value="">Seleccioná un estudio</option>' +
+                estudios.map(e => `<option value="${e.v}">${e.l}</option>`).join('');
+            selTipo.disabled = false;
+            hint.classList.remove('visible');
+            document.getElementById('resultado-disponibilidad').style.display = 'none';
+        };
+
+        const mostrarMensaje = (id, texto, tipo) => {
+            const el = document.getElementById(id);
+            el.textContent = texto; el.className = `mensaje ${tipo}`; el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        };
+
+        const sumarMinutos = (horaStr, minutos) => {
+            const [h, m] = horaStr.split(':').map(Number);
+            const total  = h * 60 + m + minutos;
+            return `${String(Math.floor(total/60)%24).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
+        };
+
+        const verificarServicios = async () => {
+            try { await fetch(`${GATEWAY}/health`); document.getElementById('dot-gateway').classList.add('activo'); } catch {}
+            try { await fetch(`${GATEWAY}/api/v1/pacientes`); document.getElementById('dot-pacientes').classList.add('activo'); } catch {}
+            try { await fetch(`${GATEWAY}/api/v1/turnos`); document.getElementById('dot-agenda').classList.add('activo'); } catch {}
+        };
+
+        const consultarDisponibilidad = async () => {
+            const id_clinica   = document.getElementById('disp-clinica').value;
+            const tipo         = document.getElementById('disp-tipo').value;
+            const fecha        = document.getElementById('disp-fecha').value;
+            const especialidad = document.getElementById('disp-especialidad').value;
+
+            if (!id_clinica) { mostrarMensaje('msg-disponibilidad', 'Seleccioná una clínica', 'error'); return; }
+            if (!tipo)       { mostrarMensaje('msg-disponibilidad', 'Seleccioná un tipo de estudio', 'error'); return; }
+            if (!fecha)      { mostrarMensaje('msg-disponibilidad', 'Seleccioná una fecha', 'error'); return; }
+
+            cerrarPanel();
+
+            try {
+                let url = `${GATEWAY}/api/v1/turnos/disponibilidad?fecha=${fecha}&tipo_estudio=${tipo}&id_clinica=${id_clinica}`;
+                if (especialidad) url += `&especialidad=${encodeURIComponent(especialidad)}`;
+
+                const res  = await fetch(url);
+                const data = await res.json();
+                if (!res.ok) { mostrarMensaje('msg-disponibilidad', data.mensaje || 'Error', 'error'); return; }
+
+                datosDisponibilidad = data;
+
+                document.getElementById('disp-duracion').textContent    = data.duracion_minutos;
+                document.getElementById('disp-preparacion').textContent = data.tiempo_preparacion_minutos;
+                document.getElementById('disp-medicos').textContent     = data.profesionales.filter(p => p.horarios.some(h => h.disponible)).length;
+                document.getElementById('disp-stock').textContent       = data.stock_insumo !== null ? data.stock_insumo : '—';
+
+                const avisoInsumo = document.getElementById('insumo-aviso');
+                if (data.insumo_especial_requerido) {
+                    document.getElementById('insumo-nombre').textContent        = data.insumo_especial_requerido;
+                    document.getElementById('insumo-stock-detalle').textContent = data.stock_insumo ?? 0;
+                    avisoInsumo.style.display = 'block';
+                } else {
+                    avisoInsumo.style.display = 'none';
+                }
+
+                document.getElementById('bloques-profesionales').innerHTML = data.profesionales.length === 0
+                    ? '<p style="color:#999;font-size:13px;padding:10px 0;">No hay médicos de esa especialidad en esta clínica.</p>'
+                    : data.profesionales.map(prof => {
+                        const libres = prof.horarios.filter(h => h.disponible).length;
+                        const slots  = prof.horarios.map(h => {
+                            const clase  = h.disponible ? 'libre' : 'ocupado';
+                            const icono  = h.disponible ? '🟢' : '⛔';
+                            const estado = h.disponible ? 'Disponible' : 'Ocupado';
+                            const oc     = h.disponible
+                                ? `onclick="seleccionarHorario(${prof.id_profesional}, '${prof.nombre}', '${prof.especialidad}', '${fecha}', '${h.hora_inicio}', '${tipo}', this)"`
+                                : '';
+                            return `<div class="horario-slot ${clase}" ${oc}>
+                                <div class="slot-icono">${icono}</div>
+                                <div class="slot-estado">${estado}</div>
+                                <div class="slot-horas">${h.hora_inicio} → ${h.hora_fin}</div>
+                                <div class="slot-tipo">${data.duracion_minutos} min</div>
+                            </div>`;
+                        }).join('');
+                        return `<div class="recurso-bloque">
+                            <div class="recurso-header profesional">
+                                <div class="recurso-avatar profesional"></div>
+                                <div>
+                                    <div class="recurso-nombre">${prof.nombre}</div>
+                                    <div class="recurso-subtitulo">${prof.especialidad}</div>
+                                </div>
+                                <div class="recurso-libre-count ${libres > 0 ? 'con-horarios' : 'sin-horarios'}">${libres} libre${libres !== 1 ? 's' : ''}</div>
+                            </div>
+                            <div class="horarios-grid">${slots}</div>
+                        </div>`;
+                    }).join('');
+
+                document.getElementById('resultado-disponibilidad').style.display = 'block';
+
+            } catch { mostrarMensaje('msg-disponibilidad', 'No se pudo conectar con el servidor', 'error'); }
+        };
+
+        const seleccionarHorario = (idProf, nombreProf, especialidad, fecha, hora, tipoEstudio, elemento) => {
+            document.querySelectorAll('.horario-slot.seleccionado').forEach(el => {
+                el.classList.remove('seleccionado');
+                el.querySelector('.slot-estado').textContent = 'Disponible';
+                el.querySelector('.slot-icono').textContent  = '🟢';
+            });
+            elemento.classList.add('seleccionado');
+            elemento.querySelector('.slot-estado').textContent = 'Seleccionado';
+            elemento.querySelector('.slot-icono').textContent  = '✅';
+
+            slotSeleccionado = { idProf, nombreProf, especialidad, fecha, hora, tipoEstudio };
+
+            const fin = sumarMinutos(hora, datosDisponibilidad.duracion_minutos);
+            document.getElementById('panel-resumen').innerHTML =
+                `<strong>Clínica:</strong> ${datosDisponibilidad.clinica.nombre} &nbsp;·&nbsp;
+                <strong>Médico:</strong> ${nombreProf} &nbsp;·&nbsp;
+                <strong>Especialidad:</strong> ${especialidad} &nbsp;·&nbsp;
+                <strong>Estudio:</strong> ${tipoEstudio} &nbsp;·&nbsp;
+                <strong>Fecha:</strong> ${fecha} &nbsp;·&nbsp;
+                <strong>Horario:</strong> ${hora} → ${fin}`;
+
+            const selCons = document.getElementById('select-consultorio');
+            const consultoriosLibres = (datosDisponibilidad.consultorios || [])
+                .filter(c => c.horarios.find(h => h.hora_inicio === hora)?.disponible);
+            selCons.innerHTML = consultoriosLibres.length
+                ? '<option value="">Seleccioná un consultorio</option>' +
+                    consultoriosLibres.map(c => `<option value="${c.id_consultorio}">${c.nombre} (${c.tipo})</option>`).join('')
+                : '<option value="">Sin consultorios disponibles</option>';
+
+            const grupoEquipo = document.getElementById('grupo-equipo');
+            const selEquip    = document.getElementById('select-equipo');
+            if (datosDisponibilidad.equipos && datosDisponibilidad.equipos.length > 0) {
+                grupoEquipo.style.display = 'block';
+                const equiposLibres = datosDisponibilidad.equipos
+                    .filter(e => e.horarios.find(h => h.hora_inicio === hora)?.disponible);
+                selEquip.innerHTML = equiposLibres.length
+                    ? '<option value="">Seleccioná un equipo</option>' +
+                        equiposLibres.map(e => `<option value="${e.id_equipo}">${e.nombre}</option>`).join('')
+                    : '<option value="">Sin equipos disponibles</option>';
+            } else {
+                grupoEquipo.style.display = 'none';
+                selEquip.innerHTML = '<option value="">No requerido</option>';
+            }
+
+            const panel = document.getElementById('panel-confirmacion');
+            panel.classList.add('visible');
+            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        };
+
+        const cerrarPanel = () => {
+            document.getElementById('panel-confirmacion').classList.remove('visible');
+            document.getElementById('resultado-busqueda-panel').style.display = 'none';
+            document.getElementById('doc-buscar-panel').value  = '';
+            document.getElementById('id-paciente-panel').value = '';
+            document.getElementById('obra-social-panel').value = '';
+            document.querySelectorAll('.horario-slot.seleccionado').forEach(el => {
+                el.classList.remove('seleccionado');
+                el.querySelector('.slot-estado').textContent = 'Disponible';
+                el.querySelector('.slot-icono').textContent  = '🟢';
+            });
+            slotSeleccionado = null;
+        };
+
+        const buscarPacientePanel = async () => {
+            const documento = document.getElementById('doc-buscar-panel').value.trim();
+            if (!documento) { mostrarMensaje('msg-panel', 'Escribe un número de documento', 'error'); return; }
+            try {
+                const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`);
+                if (!res.ok) throw new Error();
+                const paciente = await res.json();
+                document.getElementById('nombre-paciente-panel').textContent = `${paciente.nombre} ${paciente.apellido} — Doc: ${paciente.documento}`;
+                document.getElementById('id-paciente-panel').value           = paciente.id_paciente;
+                document.getElementById('resultado-busqueda-panel').style.display = 'block';
+            } catch {
+                document.getElementById('resultado-busqueda-panel').style.display = 'none';
+                mostrarMensaje('msg-panel', 'No se encontró ningún paciente con ese documento', 'error');
+            }
+        };
+
+        const confirmarTurnoDesdePanel = async () => {
+            if (!slotSeleccionado) return;
+            const id_paciente    = document.getElementById('id-paciente-panel').value;
+            const id_consultorio = document.getElementById('select-consultorio').value;
+            const id_equipo      = document.getElementById('select-equipo').value;
+            const obra_social    = document.getElementById('obra-social-panel').value;
+
+            if (!id_paciente)    { mostrarMensaje('msg-panel', 'Buscá y seleccioná un paciente', 'error'); return; }
+            if (!id_consultorio) { mostrarMensaje('msg-panel', 'Seleccioná un consultorio disponible', 'error'); return; }
+
+            const { idProf, especialidad, fecha, hora, tipoEstudio } = slotSeleccionado;
+            const body = {
+                id_paciente,
+                tipo_estudio:   tipoEstudio,
+                especialidad,
+                fecha,
+                hora:           hora + ':00',
+                id_profesional: parseInt(idProf),
+                id_consultorio: parseInt(id_consultorio)
+            };
+            if (id_equipo && id_equipo !== '') body.id_equipo   = parseInt(id_equipo);
+            if (obra_social)                   body.obra_social = obra_social;
+
+            try {
+                const res  = await fetch(`${GATEWAY}/api/v1/turnos`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+                const data = await res.json();
+                if (res.ok) {
+                    mostrarMensaje('msg-disponibilidad', 'Turno agendado exitosamente', 'exito');
+                    cerrarPanel();
+                    consultarDisponibilidad();
+                    cargarTurnos();
+                } else {
+                    mostrarMensaje('msg-panel', data.mensaje || 'Error al agendar', 'error');
+                }
+            } catch { mostrarMensaje('msg-panel', 'No se pudo conectar con el servidor', 'error'); }
+        };
+
+        const cancelarTurno = async (id_turno, version) => {
+            if (!confirm('¿Estás seguro de que quieres cancelar este turno?')) return;
+            try {
+                const res  = await fetch(`${GATEWAY}/api/v1/turnos/${id_turno}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ version })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    cargarTurnos();
+                    if (datosDisponibilidad) consultarDisponibilidad();
+                } else {
+                    alert(data.mensaje || 'Error al cancelar el turno');
+                }
+            } catch {
+                alert('No se pudo conectar con el servidor');
+            }
+        };
+
+        const irAResultados = (id_turno) => {
+            localStorage.setItem('mt_turno_resultado', id_turno);
+            window.location.href = 'resultados.html';
+        };
+
+        const cargarTurnos = async () => {
+            const tbody = document.getElementById('tabla-turnos');
+            try {
+                const url = esMedico && usuarioActual.id_profesional
+                    ? `${GATEWAY}/api/v1/turnos/profesional/${usuarioActual.id_profesional}`
+                    : `${GATEWAY}/api/v1/turnos`;
+
+                const res    = await fetch(url);
+                const turnos = await res.json();
+
+                if (!res.ok || !turnos.length) {
+                    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:#999;">${esMedico ? 'No tenés turnos agendados' : 'No hay turnos agendados'}</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = turnos.map(t => {
+                    const fin         = t.duracion_minutos ? sumarMinutos(t.hora, t.duracion_minutos) : '—';
+                    const idCorto     = t.id_turno.slice(0, 8) + '...';
+                    const puedeCancel = t.estado !== 'Cancelado';
+                    const btnResultado = esMedico && t.estado !== 'Cancelado'
+                        ? `<button class="btn-resultado" onclick="irAResultados('${t.id_turno}')">Cargar resultado</button>`
+                        : '';
+                    return `<tr>
+                        <td>
+                            <span style="font-family:monospace;font-size:11px;background:#f0f4f8;padding:3px 6px;border-radius:4px;" title="${t.id_turno}">${idCorto}</span>
+                            <button onclick="navigator.clipboard.writeText('${t.id_turno}').then(()=>alert('ID copiado'))"
+                                style="background:none;border:1px solid #1a73e8;color:#1a73e8;padding:2px 7px;border-radius:4px;cursor:pointer;font-size:11px;width:auto;margin:0 0 0 4px;">
+                                Copiar
+                            </button>
+                        </td>
+                        <td>${t.nombre_paciente}</td>
+                        <td>${t.tipo_estudio || '-'}</td>
+                        <td>${t.especialidad}</td>
+                        <td>${t.fecha}</td>
+                        <td>${t.hora.slice(0,5)} → ${fin}</td>
+                        <td>${t.duracion_minutos ? t.duracion_minutos + ' min' : '-'}</td>
+                        <td>${t.obra_social || 'Particular'}</td>
+                        <td><span class="badge ${t.estado.toLowerCase()}">${t.estado}</span></td>
+                        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                            ${puedeCancel ? `<button class="btn-cancelar-turno" onclick="cancelarTurno('${t.id_turno}', ${t.version})">Cancelar</button>` : '<span style="color:#bbb;font-size:12px;">—</span>'}
+                            ${btnResultado}
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:red;">Error al cargar turnos</td></tr>';
+            }
+        };
+
+        setFechaMinima();
+        verificarServicios();
+        cargarClinicas();
+        cargarTurnos();
+    </script>
+</body>
+</html>

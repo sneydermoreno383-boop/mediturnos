@@ -1,0 +1,36 @@
+Ver en pagina:
+http://localhost:8080
+
+#Apagar todo pero conservar los datos de las bases de datos: 
+    docker compose down
+
+#Apagar todo y borrar los datos:
+    docker compose down -v
+
+#Encender los servicios
+    -Si ya estaban construidos antes:
+     docker compose up
+
+    -Si modificaste algún archivo de código:
+     docker compose up --build
+
+Ver registros
+docker exec -it db-pacientes mysql -u root -p
+SHOW DATABASES;
+USE paciente_db;
+SHOW TABLES;
+SELECT * FROM pacientes;
+
+{email=admin@mediturnos.com; password=admin1234}
+
+usuario
+sneyder@gmail.com
+angel1234
+
+medico 
+Juan.perez@mediturnos.com
+juan1234
+
+iniciar pruebas 
+npm run test:coverage
+
