@@ -1,0 +1,8 @@
+{
+    "build": {
+    "builder": "nixpacks"
+    },
+    "deploy": {
+    "startCommand": "cd frontend && python -m http.server 8080"
+    }
+}
