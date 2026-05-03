@@ -1,0 +1,82 @@
+services:
+  frontend:
+    build: ./frontend
+    port: 8080
+  
+  servicio-agenda:
+    build: ./servicio-agenda
+    port: 3002
+    environment:
+      DB_HOST: db-agenda
+      DB_PORT: 3306
+  
+  servicio-auth:
+    build: ./servicio-auth
+    port: 3005
+    environment:
+      DB_HOST: db-auth
+      DB_PORT: 3306
+  
+  servicio-pacientes:
+    build: ./servicio-pacientes
+    port: 3001
+    environment:
+      DB_HOST: db-pacientes
+      DB_PORT: 3306
+  
+  servicio-resultados:
+    build: ./servicio-resultados
+    port: 3003
+    environment:
+      DB_HOST: db-resultados
+      DB_PORT: 3306
+  
+  servicio-notificaciones:
+    build: ./servicio-notificaciones
+    port: 3004
+    environment:
+      DB_HOST: db-notificaciones
+      DB_PORT: 3306
+  
+  servicio-facturacion:
+    build: ./servicio-facturacion
+    port: 3006
+    environment:
+      DB_HOST: db-facturacion
+      DB_PORT: 3306
+  
+  db-agenda:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: agenda_db
+  
+  db-auth:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+  
+  db-pacientes:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: paciente_db
+  
+  db-resultados:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: resultados_db
+  
+  db-notificaciones:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: notificaciones_db
+  
+  db-facturacion:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: facturacion_db
