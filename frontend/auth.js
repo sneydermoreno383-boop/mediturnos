@@ -2,7 +2,7 @@
 // Incluir en cada página HTML con: <script src="auth.js"></script>
 
 const Auth = {
-    GATEWAY: 'http://localhost:80',
+    GATEWAY = 'http://172.25.66.107',
 
     getToken() {
         return localStorage.getItem('mt_token');

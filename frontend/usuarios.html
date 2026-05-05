@@ -203,7 +203,7 @@
     Auth.inyectarHeader('Usuarios');
     Auth.aplicarPermisos(usuarioActual);
 
-    const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
+    const GATEWAY = 'http://172.25.66.107';
     const token = () => localStorage.getItem('mt_token');
 
     const mostrarMensaje = (id, texto, tipo) => {
