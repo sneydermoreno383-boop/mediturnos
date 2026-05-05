@@ -168,7 +168,7 @@
     Auth.aplicarPermisos(usuarioActual);
 
     const esMedico = usuarioActual.rol === 'medico';
-    const GATEWAY  = 'http://localhost:80';
+    const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
 
     // Si viene desde la agenda del médico, cambiar el link de volver
     if (esMedico) {

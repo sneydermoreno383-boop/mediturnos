@@ -112,7 +112,7 @@
     const usuarioActual = Auth.verificar(['admin']);
     Auth.inyectarHeader('Facturación');
 
-    const GATEWAY = 'http://localhost:80';
+    const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
 
     const mostrarMensaje = (texto, tipo = 'exito') => {
         const el = document.getElementById('msg-facturas');

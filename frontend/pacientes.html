@@ -298,7 +298,7 @@
         Auth.inyectarHeader('Pacientes');
         Auth.aplicarPermisos(usuarioActual);
 
-        const GATEWAY = 'http://localhost:80';
+        const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
 
         const verificarServicios = async () => {
             try { await fetch(`${GATEWAY}/health`); document.getElementById('dot-gateway').classList.add('activo'); } catch {}
