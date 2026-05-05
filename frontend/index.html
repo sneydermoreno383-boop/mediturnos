@@ -1,358 +1,119 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediTurnos</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f4f8;
-            color: #333;
-        }
-
-        header {
-            background: #1a73e8;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 28px;
-        }
-
-        header p {
-            font-size: 14px;
-            margin-top: 5px;
-            opacity: 0.85;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h2 {
-            color: #1a73e8;
-            margin-bottom: 20px;
-            font-size: 18px;
-            border-bottom: 2px solid #e8f0fe;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-group textarea {
-            height: 80px;
-            resize: vertical;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        button {
-            background: #1a73e8;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            width: 100%;
-            margin-top: 5px;
-        }
-
-        button:hover {
-            background: #1557b0;
-        }
-
-        button.secundario {
-            background: #34a853;
-        }
-
-        button.secundario:hover {
-            background: #2d8f47;
-        }
-
-        .mensaje {
-            padding: 12px;
-            border-radius: 5px;
-            margin-top: 15px;
-            font-size: 14px;
-            display: none;
-        }
-
-        .mensaje.exito {
-            background: #e6f4ea;
-            color: #2d8f47;
-            border: 1px solid #34a853;
-        }
-
-        .mensaje.error {
-            background: #fce8e6;
-            color: #c5221f;
-            border: 1px solid #ea4335;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            margin-top: 15px;
-        }
-
-        table th {
-            background: #1a73e8;
-            color: white;
-            padding: 10px;
-            text-align: left;
-        }
-
-        table td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .badge.pendiente {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .badge.confirmado {
-            background: #d1e7dd;
-            color: #0f5132;
-        }
-
-        .badge.cancelado {
-            background: #f8d7da;
-            color: #842029;
-        }
-
-        .badge.disponible {
-            background: #d1e7dd;
-            color: #0f5132;
-        }
-
-        .badge.enviado {
-            background: #cfe2ff;
-            color: #084298;
-        }
-
-        .badge.fallido {
-            background: #f8d7da;
-            color: #842029;
-        }
-
-        .status-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .status-item {
-            flex: 1;
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .status-item .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ccc;
-            display: inline-block;
-            margin-right: 8px;
-        }
-
-        .status-item .dot.activo {
-            background: #34a853;
-        }
-
-        .status-item span {
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .seccion-titulo {
-            font-size: 22px;
-            font-weight: bold;
-            color: #1a73e8;
-            margin: 30px 0 10px;
-            border-left: 4px solid #1a73e8;
-            padding-left: 10px;
-        }
-
-        .agenda-acceso {
-            background: linear-gradient(135deg, #1a73e8, #0d47a1);
-            border-radius: 8px;
-            padding: 28px 25px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
-            gap: 20px;
-        }
-
-        .agenda-acceso-info {
-            color: white;
-        }
-
-        .agenda-acceso-info h3 {
-            font-size: 20px;
-            margin-bottom: 6px;
-        }
-
-        .agenda-acceso-info p {
-            font-size: 13px;
-            opacity: 0.85;
-            line-height: 1.5;
-        }
-
-        .agenda-acceso-btn {
-            background: white;
-            color: #1a73e8;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            white-space: nowrap;
-            width: auto;
-            margin-top: 0;
-            flex-shrink: 0;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .agenda-acceso-btn:hover {
-            background: #e8f0fe;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; }
+        header { background: #1a73e8; color: white; padding: 20px; text-align: center; }
+        header h1 { font-size: 28px; }
+        header p { font-size: 14px; margin-top: 5px; opacity: 0.85; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { color: #1a73e8; margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .form-group textarea { height: 80px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button { background: #1a73e8; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; margin-top: 5px; }
+        button:hover { background: #1557b0; }
+        button.secundario { background: #34a853; }
+        button.secundario:hover { background: #2d8f47; }
+        .mensaje { padding: 12px; border-radius: 5px; margin-top: 15px; font-size: 14px; display: none; }
+        .mensaje.exito { background: #e6f4ea; color: #2d8f47; border: 1px solid #34a853; }
+        .mensaje.error { background: #fce8e6; color: #c5221f; border: 1px solid #ea4335; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+        table th { background: #1a73e8; color: white; padding: 10px; text-align: left; }
+        table td { padding: 10px; border-bottom: 1px solid #eee; }
+        table tr:hover { background: #f8f9fa; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge.pendiente { background: #fff3cd; color: #856404; }
+        .badge.confirmado { background: #d1e7dd; color: #0f5132; }
+        .badge.cancelado { background: #f8d7da; color: #842029; }
+        .badge.disponible { background: #d1e7dd; color: #0f5132; }
+        .badge.enviado { background: #cfe2ff; color: #084298; }
+        .badge.fallido { background: #f8d7da; color: #842029; }
+        .status-bar { display: flex; gap: 10px; margin-bottom: 25px; }
+        .status-item { flex: 1; background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .status-item .dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 8px; }
+        .status-item .dot.activo { background: #34a853; }
+        .status-item span { font-size: 13px; font-weight: bold; }
+        .seccion-titulo { font-size: 22px; font-weight: bold; color: #1a73e8; margin: 30px 0 10px; border-left: 4px solid #1a73e8; padding-left: 10px; }
+        .agenda-acceso { background: linear-gradient(135deg, #1a73e8, #0d47a1); border-radius: 8px; padding: 28px 25px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(26,115,232,0.3); gap: 20px; }
+        .agenda-acceso-info { color: white; }
+        .agenda-acceso-info h3 { font-size: 20px; margin-bottom: 6px; }
+        .agenda-acceso-info p { font-size: 13px; opacity: 0.85; line-height: 1.5; }
+        .agenda-acceso-btn { background: white; color: #1a73e8; border: none; padding: 12px 28px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap; width: auto; margin-top: 0; flex-shrink: 0; text-decoration: none; display: inline-block; }
+        .agenda-acceso-btn:hover { background: #e8f0fe; }
     </style>
     <script src="auth.js"></script>
 </head>
-
 <body>
     <header>
         <h1>MediTurnos</h1>
         <p>Sistema de gestión de turnos médicos — Arquitectura de Microservicios</p>
     </header>
-
+ 
     <div class="container">
-
         <div class="status-bar">
             <div class="status-item"><span><span class="dot" id="dot-gateway"></span>API Gateway</span></div>
             <div class="status-item"><span><span class="dot" id="dot-pacientes"></span>Pacientes</span></div>
             <div class="status-item"><span><span class="dot" id="dot-agenda"></span>Agenda</span></div>
             <div class="status-item"><span><span class="dot" id="dot-resultados"></span>Resultados</span></div>
             <div class="status-item"><span><span class="dot" id="dot-notificaciones"></span>Notificaciones</span></div>
-            <div class="status-item"><span><span class="dot" id="dot-facturas"></span>Facturación</span></div>   
+            <div class="status-item"><span><span class="dot" id="dot-facturas"></span>Facturación</span></div>
         </div>
-
+ 
         <div class="seccion-titulo">Pacientes</div>
         <div class="agenda-acceso" style="background: linear-gradient(135deg, #34a853, #1e7e34);">
             <div class="agenda-acceso-info">
                 <h3>Gestión de Pacientes</h3>
-                <p>Registrá pacientes, gestioná sus coberturas médicas (EPS), verificá vigencias, actualizá saldos y
-                    consultá el historial de autorizaciones.</p>
+                <p>Registrá pacientes, gestioná sus coberturas médicas (EPS), verificá vigencias, actualizá saldos y consultá el historial de autorizaciones.</p>
             </div>
             <a class="agenda-acceso-btn" href="pacientes.html">Ir a Pacientes →</a>
         </div>
-
+ 
         <div class="seccion-titulo">Agenda</div>
         <div class="agenda-acceso">
             <div class="agenda-acceso-info">
-                <h3> Sistema de Agenda</h3>
-                <p>Consultá disponibilidad de médicos en tiempo real, agendá turnos con reglas de negocio automáticas
-                    (duración por estudio, obra social, insumos) y evitá dobles reservas.</p>
+                <h3>Sistema de Agenda</h3>
+                <p>Consultá disponibilidad de médicos en tiempo real, agendá turnos con reglas de negocio automáticas y evitá dobles reservas.</p>
             </div>
             <a class="agenda-acceso-btn" href="agenda.html">Ir a Agenda →</a>
         </div>
-
+ 
         <div class="seccion-titulo">Resultados</div>
-                <div class="agenda-acceso" style="background: linear-gradient(135deg, #f57c00, #e65100);">
-                        <div class="agenda-acceso-info">
-                        <h3>Resultados Clínicos</h3>
-                        <p>Registrá resultados de estudios, adjuntá archivos PDF, imágenes y videos. La especialidad se completa automáticamente desde el turno.</p>
-                </div>
-                    <a class="agenda-acceso-btn" href="resultados.html">Ir a Resultados →</a>
+        <div class="agenda-acceso" style="background: linear-gradient(135deg, #f57c00, #e65100);">
+            <div class="agenda-acceso-info">
+                <h3>Resultados Clínicos</h3>
+                <p>Registrá resultados de estudios, adjuntá archivos PDF, imágenes y videos.</p>
+            </div>
+            <a class="agenda-acceso-btn" href="resultados.html">Ir a Resultados →</a>
         </div>
-
-<div class="seccion-titulo">Usuarios</div>
-<div class="agenda-acceso" style="background: linear-gradient(135deg, #6f42c1, #4a148c);">
-    <div class="agenda-acceso-info">
-        <h3>Gestión de Usuarios</h3>
-        <p>Creá cuentas para médicos, activá o desactivá usuarios y consultá todos los accesos al sistema.</p>
-    </div>
-    <a class="agenda-acceso-btn" href="usuarios.html">Ir a Usuarios →</a>
-</div>
-
-<div class="seccion-titulo">Facturación</div>
-<div class="agenda-acceso" style="background: linear-gradient(135deg, #c2185b, #880e4f);">
-    <div class="agenda-acceso-info">
-        <h3>Facturación</h3>
-        <p>Generá facturas por turnos, descargá PDF con el detalle de cada factura y consultá el historial de facturación por paciente.</p>
-    </div>
-    <a class="agenda-acceso-btn" href="facturas.html">Ir a Facturación →</a>
-</div>
-
+ 
+        <div class="seccion-titulo">Usuarios</div>
+        <div class="agenda-acceso" style="background: linear-gradient(135deg, #6f42c1, #4a148c);">
+            <div class="agenda-acceso-info">
+                <h3>Gestión de Usuarios</h3>
+                <p>Creá cuentas para médicos, activá o desactivá usuarios y consultá todos los accesos al sistema.</p>
+            </div>
+            <a class="agenda-acceso-btn" href="usuarios.html">Ir a Usuarios →</a>
+        </div>
+ 
+        <div class="seccion-titulo">Facturación</div>
+        <div class="agenda-acceso" style="background: linear-gradient(135deg, #c2185b, #880e4f);">
+            <div class="agenda-acceso-info">
+                <h3>Facturación</h3>
+                <p>Generá facturas por turnos, descargá PDF y consultá el historial de facturación por paciente.</p>
+            </div>
+            <a class="agenda-acceso-btn" href="facturas.html">Ir a Facturación →</a>
+        </div>
+ 
         <div class="seccion-titulo">Notificaciones</div>
-
+ 
         <div class="card">
             <h2>Registrar Notificación</h2>
             <div class="form-group">
@@ -362,8 +123,7 @@
                     <button onclick="buscarPacienteNotif()" style="width:auto;padding:10px 20px;">Buscar</button>
                 </div>
             </div>
-            <div id="resultado-busqueda-notif"
-                style="display:none;background:#e8f0fe;border-radius:5px;padding:12px;margin-bottom:15px;">
+            <div id="resultado-busqueda-notif" style="display:none;background:#e8f0fe;border-radius:5px;padding:12px;margin-bottom:15px;">
                 <span style="font-size:14px;">Paciente: <strong id="nombre-paciente-notif"></strong></span>
                 <input type="hidden" id="id-paciente-notif">
             </div>
@@ -383,7 +143,7 @@
             <button onclick="crearNotificacion()">Registrar Notificación</button>
             <div class="mensaje" id="msg-notif"></div>
         </div>
-
+ 
         <div class="card">
             <h2>Ver Notificaciones por Paciente</h2>
             <div class="form-group">
@@ -396,165 +156,53 @@
             <div class="mensaje" id="msg-ver-notif"></div>
             <table>
                 <thead>
-                    <tr>
-                        <th>Paciente</th>
-                        <th>Tipo</th>
-                        <th>Mensaje</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                    </tr>
+                    <tr><th>Paciente</th><th>Tipo</th><th>Mensaje</th><th>Estado</th><th>Fecha</th></tr>
                 </thead>
                 <tbody id="tabla-notificaciones">
-                    <tr>
-                        <td colspan="5" style="text-align:center;color:#999;">Busca un paciente para ver sus
-                            notificaciones</td>
-                    </tr>
+                    <tr><td colspan="5" style="text-align:center;color:#999;">Busca un paciente para ver sus notificaciones</td></tr>
                 </tbody>
             </table>
         </div>
-
     </div>
-
+ 
     <script>
-        // Verificar sesión - solo admin puede acceder
         const usuarioActual = Auth.verificar(['admin']);
         Auth.inyectarHeader('Principal');
         Auth.aplicarPermisos(usuarioActual);
-
-        const GATEWAY = 'http://172.25.66.107';
-
+ 
+        const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
+        const NH = { 'ngrok-skip-browser-warning': 'true' };
+ 
         const verificarServicios = async () => {
-    const verificar = async (url, dotId) => {
-        try {
-            const res = await fetch(url);
-            const el = document.getElementById(dotId);
-            if (res.ok && el) {
-                el.classList.add('activo');
-            }
-        } catch { }
-    };
-
-    await Promise.all([
-        verificar(`${GATEWAY}/health`,                              'dot-gateway'),
-        verificar(`${GATEWAY}/api/v1/pacientes/health/live`,        'dot-pacientes'),
-        verificar(`${GATEWAY}/api/v1/turnos/health/live`,           'dot-agenda'),
-        verificar(`${GATEWAY}/api/v1/resultados/health/live`,       'dot-resultados'),
-        verificar(`${GATEWAY}/api/v1/notificaciones/health/live`,   'dot-notificaciones'),
-        verificar(`${GATEWAY}/api/v1/facturas/health/live`,         'dot-facturas'), // <-- AÑADE ESTA LÍNEA
-    ]);
-};
-
+            const verificar = async (url, dotId) => {
+                try {
+                    const res = await fetch(url, { headers: NH });
+                    const el = document.getElementById(dotId);
+                    if (res.ok && el) el.classList.add('activo');
+                } catch {}
+            };
+            await Promise.all([
+                verificar(`${GATEWAY}/health`,                             'dot-gateway'),
+                verificar(`${GATEWAY}/api/v1/pacientes/health/live`,       'dot-pacientes'),
+                verificar(`${GATEWAY}/api/v1/turnos/health/live`,          'dot-agenda'),
+                verificar(`${GATEWAY}/api/v1/resultados/health/live`,      'dot-resultados'),
+                verificar(`${GATEWAY}/api/v1/notificaciones/health/live`,  'dot-notificaciones'),
+                verificar(`${GATEWAY}/api/v1/facturas/health/live`,        'dot-facturas'),
+            ]);
+        };
+ 
         const mostrarMensaje = (id, texto, tipo) => {
             const el = document.getElementById(id);
-            el.textContent = texto;
-            el.className = `mensaje ${tipo}`;
-            el.style.display = 'block';
+            el.textContent = texto; el.className = `mensaje ${tipo}`; el.style.display = 'block';
             setTimeout(() => el.style.display = 'none', 4000);
         };
-
-        const crearPaciente = async () => {
-            const datos = {
-                nombre: document.getElementById('nombre').value,
-                apellido: document.getElementById('apellido').value,
-                documento: document.getElementById('documento').value,
-                fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
-                telefono: document.getElementById('telefono').value,
-                email: document.getElementById('email').value
-            };
-            if (!datos.nombre || !datos.apellido || !datos.documento || !datos.fecha_nacimiento || !datos.email) {
-                mostrarMensaje('msg-paciente', 'Por favor completa todos los campos obligatorios', 'error'); return;
-            }
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datos) });
-                const data = await res.json();
-                if (res.ok) { mostrarMensaje('msg-paciente', 'Paciente registrado exitosamente', 'exito'); cargarPacientes(); }
-                else mostrarMensaje('msg-paciente', data.mensaje || 'Error al registrar', 'error');
-            } catch { mostrarMensaje('msg-paciente', 'No se pudo conectar con el servidor', 'error'); }
-        };
-
-        const cargarPacientes = async () => {
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes`);
-                const pacientes = await res.json();
-                const tbody = document.getElementById('tabla-pacientes');
-                if (pacientes.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No hay pacientes registrados</td></tr>'; return; }
-                tbody.innerHTML = pacientes.map(p => `<tr><td>${p.nombre} ${p.apellido}</td><td>${p.documento}</td><td>${p.email}</td><td>${p.telefono || '-'}</td><td style="font-size:11px;color:#999;">${p.id_paciente}</td></tr>`).join('');
-            } catch { document.getElementById('tabla-pacientes').innerHTML = '<tr><td colspan="5" style="text-align:center;color:red;">Error al cargar pacientes</td></tr>'; }
-        };
-
+ 
         const buscarPacientePorDocumento = async (documento) => {
-            const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`);
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`, { headers: NH });
             if (!res.ok) throw new Error('Paciente no encontrado');
             return await res.json();
         };
-
-        const buscarPacienteResultado = async () => {
-            const documento = document.getElementById('doc-buscar-resultado').value.trim();
-            if (!documento) { mostrarMensaje('msg-resultado', 'Escribe un número de documento', 'error'); return; }
-            try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                document.getElementById('nombre-paciente-resultado').textContent = `${paciente.nombre} ${paciente.apellido}`;
-                document.getElementById('id-paciente-resultado').value = paciente.id_paciente;
-                document.getElementById('resultado-busqueda-paciente').style.display = 'block';
-            } catch { document.getElementById('resultado-busqueda-paciente').style.display = 'none'; mostrarMensaje('msg-resultado', 'No se encontró ningún paciente con ese documento', 'error'); }
-        };
-
-        const crearResultado = async () => {
-            const id_turno = document.getElementById('id-turno-resultado').value.trim();
-            const id_paciente = document.getElementById('id-paciente-resultado').value;
-            const nombre_paciente = document.getElementById('nombre-paciente-resultado').textContent;
-            const especialidad = document.getElementById('especialidad-resultado').value;
-            const fecha_resultado = document.getElementById('fecha-resultado').value;
-            const descripcion = document.getElementById('descripcion-resultado').value;
-
-            if (!id_turno || !id_paciente || !especialidad || !fecha_resultado || !descripcion) {
-                mostrarMensaje('msg-resultado', 'Por favor completa todos los campos', 'error'); return;
-            }
-
-            // Usar FormData para poder enviar archivos junto con los datos
-            const formData = new FormData();
-            formData.append('id_turno', id_turno);
-            formData.append('id_paciente', id_paciente);
-            formData.append('nombre_paciente', nombre_paciente);
-            formData.append('especialidad', especialidad);
-            formData.append('fecha_resultado', fecha_resultado);
-            formData.append('descripcion', descripcion);
-
-            // Adjuntar los archivos seleccionados (campo "archivos", igual que en el backend)
-            const archivosInput = document.getElementById('archivos-resultado');
-            for (const archivo of archivosInput.files) {
-                formData.append('archivos', archivo);
-            }
-
-            try {
-                // Sin Content-Type: el navegador lo setea automáticamente con el boundary correcto
-                const res = await fetch(`${GATEWAY}/api/v1/resultados`, { method: 'POST', body: formData });
-                const data = await res.json();
-                if (res.ok) {
-                    mostrarMensaje('msg-resultado', 'Resultado registrado exitosamente', 'exito');
-                    archivosInput.value = '';
-                    document.getElementById('lista-archivos').textContent = '';
-                } else {
-                    mostrarMensaje('msg-resultado', data.mensaje || 'Error al registrar', 'error');
-                }
-            } catch {
-                mostrarMensaje('msg-resultado', 'No se pudo conectar con el servidor', 'error');
-            }
-        };
-
-        const buscarResultados = async () => {
-            const documento = document.getElementById('doc-buscar-ver-resultado').value.trim();
-            if (!documento) { mostrarMensaje('msg-ver-resultado', 'Escribe un número de documento', 'error'); return; }
-            try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                const res = await fetch(`${GATEWAY}/api/v1/resultados/paciente/${paciente.id_paciente}`);
-                const data = await res.json();
-                const tbody = document.getElementById('tabla-resultados');
-                if (!res.ok) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No se encontraron resultados</td></tr>'; return; }
-                tbody.innerHTML = data.map(r => `<tr><td>${r.nombre_paciente}</td><td>${r.especialidad}</td><td>${r.descripcion}</td><td>${r.fecha_resultado}</td><td><span class="badge ${r.estado.toLowerCase()}">${r.estado}</span></td></tr>`).join('');
-            } catch { mostrarMensaje('msg-ver-resultado', 'No se encontró el paciente o no tiene resultados', 'error'); }
-        };
-
+ 
         const buscarPacienteNotif = async () => {
             const documento = document.getElementById('doc-buscar-notif').value.trim();
             if (!documento) { mostrarMensaje('msg-notif', 'Escribe un número de documento', 'error'); return; }
@@ -563,39 +211,53 @@
                 document.getElementById('nombre-paciente-notif').textContent = `${paciente.nombre} ${paciente.apellido}`;
                 document.getElementById('id-paciente-notif').value = paciente.id_paciente;
                 document.getElementById('resultado-busqueda-notif').style.display = 'block';
-            } catch { document.getElementById('resultado-busqueda-notif').style.display = 'none'; mostrarMensaje('msg-notif', 'No se encontró ningún paciente con ese documento', 'error'); }
+            } catch {
+                document.getElementById('resultado-busqueda-notif').style.display = 'none';
+                mostrarMensaje('msg-notif', 'No se encontró ningún paciente con ese documento', 'error');
+            }
         };
-
+ 
         const crearNotificacion = async () => {
-            const id_paciente = document.getElementById('id-paciente-notif').value;
-            const nombre_paciente = document.getElementById('nombre-paciente-notif').textContent;
-            const tipo = document.getElementById('tipo-notif').value;
-            const mensaje = document.getElementById('mensaje-notif').value;
+            const id_paciente    = document.getElementById('id-paciente-notif').value;
+            const nombre_paciente= document.getElementById('nombre-paciente-notif').textContent;
+            const tipo           = document.getElementById('tipo-notif').value;
+            const mensaje        = document.getElementById('mensaje-notif').value;
             if (!id_paciente || !tipo || !mensaje) { mostrarMensaje('msg-notif', 'Por favor completa todos los campos', 'error'); return; }
             try {
-                const res = await fetch(`${GATEWAY}/api/v1/notificaciones`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_paciente, nombre_paciente, tipo, mensaje }) });
+                const res = await fetch(`${GATEWAY}/api/v1/notificaciones`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...NH },
+                    body: JSON.stringify({ id_paciente, nombre_paciente, tipo, mensaje })
+                });
                 const data = await res.json();
-                if (res.ok) { mostrarMensaje('msg-notif', 'Notificación registrada exitosamente', 'exito'); document.getElementById('mensaje-notif').value = ''; document.getElementById('tipo-notif').value = ''; }
-                else mostrarMensaje('msg-notif', data.mensaje || 'Error al registrar', 'error');
+                if (res.ok) {
+                    mostrarMensaje('msg-notif', 'Notificación registrada exitosamente', 'exito');
+                    document.getElementById('mensaje-notif').value = '';
+                    document.getElementById('tipo-notif').value = '';
+                } else mostrarMensaje('msg-notif', data.mensaje || 'Error al registrar', 'error');
             } catch { mostrarMensaje('msg-notif', 'No se pudo conectar con el servidor', 'error'); }
         };
-
+ 
         const buscarNotificaciones = async () => {
             const documento = document.getElementById('doc-buscar-ver-notif').value.trim();
             if (!documento) { mostrarMensaje('msg-ver-notif', 'Escribe un número de documento', 'error'); return; }
             try {
                 const paciente = await buscarPacientePorDocumento(documento);
-                const res = await fetch(`${GATEWAY}/api/v1/notificaciones/paciente/${paciente.id_paciente}`);
+                const res = await fetch(`${GATEWAY}/api/v1/notificaciones/paciente/${paciente.id_paciente}`, { headers: NH });
                 const data = await res.json();
                 const tbody = document.getElementById('tabla-notificaciones');
                 if (!res.ok) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No se encontraron notificaciones</td></tr>'; return; }
-                tbody.innerHTML = data.map(n => `<tr><td>${n.nombre_paciente}</td><td>${n.tipo.replace('_', ' ')}</td><td>${n.mensaje}</td><td><span class="badge ${n.estado.toLowerCase()}">${n.estado}</span></td><td>${new Date(n.fecha_envio).toLocaleDateString()}</td></tr>`).join('');
+                tbody.innerHTML = data.map(n => `<tr>
+                    <td>${n.nombre_paciente}</td>
+                    <td>${n.tipo.replace('_', ' ')}</td>
+                    <td>${n.mensaje}</td>
+                    <td><span class="badge ${n.estado.toLowerCase()}">${n.estado}</span></td>
+                    <td>${new Date(n.fecha_envio).toLocaleDateString()}</td>
+                </tr>`).join('');
             } catch { mostrarMensaje('msg-ver-notif', 'No se encontró el paciente o no tiene notificaciones', 'error'); }
         };
-
+ 
         verificarServicios();
-        cargarPacientes();
     </script>
 </body>
-
 </html>

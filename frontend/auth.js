@@ -2,7 +2,7 @@
 // Incluir en cada página HTML con: <script src="auth.js"></script>
 
 const Auth = {
-    GATEWAY = 'http://172.25.66.107',
+    GATEWAY: 'https://movable-raging-ice.ngrok-free.dev',
 
     getToken() {
         return localStorage.getItem('mt_token');
@@ -22,8 +22,6 @@ const Auth = {
         window.location.href = 'login.html';
     },
 
-    // Verifica si hay sesión activa y si el rol tiene permiso
-    // roles: array de roles permitidos, ej: ['admin', 'medico']
     verificar(rolesPermitidos) {
         const token = this.getToken();
         const usuario = this.getUsuario();
@@ -41,7 +39,6 @@ const Auth = {
         return usuario;
     },
 
-    // Inyecta el header con info del usuario y botón de logout
     inyectarHeader(nombrePagina) {
         const usuario = this.getUsuario();
         if (!usuario) return;
@@ -84,9 +81,7 @@ const Auth = {
         headerEl.appendChild(barra);
     },
 
-    // Oculta elementos del DOM según el rol
     aplicarPermisos(usuario) {
-        // Ocultar elementos con data-rol que no coincidan
         document.querySelectorAll('[data-rol]').forEach(el => {
             const rolesPermitidos = el.getAttribute('data-rol').split(',').map(r => r.trim());
             if (!rolesPermitidos.includes(usuario.rol)) {
@@ -95,11 +90,35 @@ const Auth = {
         });
     },
 
-    // Headers con token para peticiones autenticadas
+    // Headers para peticiones autenticadas con JSON
     headers() {
         return {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.getToken()}`
+            'Authorization': `Bearer ${this.getToken()}`,
+            'ngrok-skip-browser-warning': 'true'
+        };
+    },
+
+    // Headers para peticiones autenticadas SIN Content-Type (FormData/archivos)
+    headersFormData() {
+        return {
+            'Authorization': `Bearer ${this.getToken()}`,
+            'ngrok-skip-browser-warning': 'true'
+        };
+    },
+
+    // Headers solo para peticiones públicas (sin token)
+    headersPublicos() {
+        return {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+        };
+    },
+
+    // Headers solo ngrok (sin Content-Type ni token, para GET simples y FormData)
+    headersNgrok() {
+        return {
+            'ngrok-skip-browser-warning': 'true'
         };
     }
 };

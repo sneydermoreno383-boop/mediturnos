@@ -108,38 +108,36 @@
         <h1>MediTurnos — Agenda</h1>
         <p>Gestión de turnos médicos · Disponibilidad en tiempo real · Reglas de negocio</p>
     </header>
-
+ 
     <div class="container">
-
+ 
         <a class="nav-back" href="index.html">← Volver al sistema principal</a>
-
+ 
         <div class="status-bar">
             <div class="status-item"><span><span class="dot" id="dot-gateway"></span>API Gateway</span></div>
             <div class="status-item"><span><span class="dot" id="dot-pacientes"></span>Pacientes</span></div>
             <div class="status-item"><span><span class="dot" id="dot-agenda"></span>Agenda</span></div>
         </div>
-
-        <!-- Banner solo para médicos -->
+ 
         <div class="medico-banner" id="medico-banner" style="display:none;">
             <strong id="medico-banner-nombre"></strong>
             Solo ves tus propios turnos. Para cargar un resultado, hacé clic en "Cargar resultado" en el turno correspondiente.
         </div>
-
-        <!-- Sección disponibilidad — se oculta para médicos -->
+ 
         <div id="seccion-disponibilidad">
             <div class="seccion-titulo">Consultar Disponibilidad</div>
             <div id="card-disponibilidad" class="card">
                 <h2>Disponibilidad de médicos en tiempo real</h2>
-
+ 
                 <div class="form-group">
                     <label>Clínica</label>
                     <select id="disp-clinica" onchange="onCambioClinica()">
                         <option value="">Cargando clínicas...</option>
                     </select>
                 </div>
-
+ 
                 <div class="clinica-seleccionada" id="clinica-seleccionada-info"></div>
-
+ 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Especialidad</label>
@@ -156,15 +154,15 @@
                         <div class="select-hint visible" id="hint-disp">Seleccioná primero una especialidad</div>
                     </div>
                 </div>
-
+ 
                 <div class="form-group">
                     <label>Fecha</label>
                     <input type="date" id="disp-fecha">
                 </div>
-
+ 
                 <button onclick="consultarDisponibilidad()">Ver disponibilidad</button>
                 <div class="mensaje" id="msg-disponibilidad"></div>
-
+ 
                 <div id="resultado-disponibilidad" style="display:none; margin-top:24px;">
                     <div class="disp-stats">
                         <div class="disp-stat"><div class="valor" id="disp-duracion">—</div><div class="etiqueta">Duración (min)</div></div>
@@ -172,21 +170,21 @@
                         <div class="disp-stat"><div class="valor" id="disp-medicos">—</div><div class="etiqueta">Médicos disponibles</div></div>
                         <div class="disp-stat"><div class="valor" id="disp-stock">—</div><div class="etiqueta">Stock insumo</div></div>
                     </div>
-
+ 
                     <div class="insumo-aviso" id="insumo-aviso">
                         Requiere insumo especial: <strong id="insumo-nombre"></strong> &nbsp;·&nbsp; Stock: <strong id="insumo-stock-detalle"></strong>
                     </div>
-
+ 
                     <div class="leyenda">
                         <div class="leyenda-item"><div class="leyenda-dot libre"></div> Disponible — hacé clic para seleccionar</div>
                         <div class="leyenda-item"><div class="leyenda-dot ocupado"></div> Ocupado</div>
                     </div>
-
+ 
                     <div class="disp-seccion">
                         <div class="disp-seccion-titulo">Médicos — seleccioná un horario</div>
                         <div id="bloques-profesionales"></div>
                     </div>
-
+ 
                     <div class="panel-confirmacion" id="panel-confirmacion">
                         <h3>Completá el turno</h3>
                         <div class="panel-resumen" id="panel-resumen"></div>
@@ -200,7 +198,7 @@
                                 <select id="select-equipo"><option value="">No requerido</option></select>
                             </div>
                         </div>
-
+ 
                         <div class="form-group">
                             <label>Número de documento del paciente</label>
                             <div style="display:flex;gap:10px;">
@@ -212,7 +210,7 @@
                             ✓ <strong id="nombre-paciente-panel"></strong>
                             <input type="hidden" id="id-paciente-panel">
                         </div>
-
+ 
                         <div class="form-group">
                             <label>EPS / Obra Social</label>
                             <select id="obra-social-panel">
@@ -226,7 +224,7 @@
                                 <option value="Medimas EPS">Medimas EPS</option>
                             </select>
                         </div>
-
+ 
                         <div class="mensaje" id="msg-panel"></div>
                         <div class="panel-acciones">
                             <button onclick="confirmarTurnoDesdePanel()">Confirmar turno</button>
@@ -236,9 +234,9 @@
                 </div>
             </div>
         </div>
-
+ 
         <div class="seccion-titulo" id="titulo-turnos">Turnos Agendados</div>
-
+ 
         <div class="card">
             <h2 id="subtitulo-turnos">Listado de Turnos</h2>
             <button class="secundario" onclick="cargarTurnos()">Actualizar lista</button>
@@ -262,34 +260,30 @@
                 </tbody>
             </table>
         </div>
-
+ 
     </div>
-
+ 
     <script>
         const usuarioActual = Auth.verificar(['admin', 'medico']);
         Auth.inyectarHeader('Agenda');
         Auth.aplicarPermisos(usuarioActual);
-
+ 
         const esMedico = usuarioActual.rol === 'medico';
-
+ 
         if (esMedico) {
-            // Ocultar sección de disponibilidad completa
             document.getElementById('seccion-disponibilidad').style.display = 'none';
-
-            // Mostrar banner
             document.getElementById('medico-banner').style.display = 'block';
             document.getElementById('medico-banner-nombre').textContent =
                 `Dr/a. ${usuarioActual.nombre} ${usuarioActual.apellido} — Solo tus turnos`;
-
-            // Cambiar títulos
             document.getElementById('titulo-turnos').textContent   = 'Mis Turnos';
             document.getElementById('subtitulo-turnos').textContent = 'Mis pacientes agendados';
         }
-
-        const GATEWAY = 'http://172.25.66.107';
+ 
+        const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
+        const NH      = { 'ngrok-skip-browser-warning': 'true' };
         let datosDisponibilidad = null;
         let slotSeleccionado    = null;
-
+ 
         const ESTUDIOS_POR_ESPECIALIDAD = {
             'Cardiología':      [{ v: 'electrocardiograma', l: 'Electrocardiograma (20 min)' }, { v: 'resonancia', l: 'Resonancia (60 min)' }],
             'Dermatología':     [{ v: 'ecografia', l: 'Ecografía (30 min)' }],
@@ -302,17 +296,17 @@
             'Psiquiatría':      [{ v: 'resonancia', l: 'Resonancia (60 min)' }, { v: 'electrocardiograma', l: 'Electrocardiograma (20 min)' }],
             'Medicina General': [{ v: 'laboratorio', l: 'Laboratorio (15 min)' }, { v: 'radiografia', l: 'Radiografía (15 min)' }, { v: 'ecografia', l: 'Ecografía (30 min)' }, { v: 'electrocardiograma', l: 'Electrocardiograma (20 min)' }],
         };
-
+ 
         const setFechaMinima = () => {
             const ahoraColombia = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
             const fechaHoy      = ahoraColombia.toISOString().split('T')[0];
             document.getElementById('disp-fecha').min   = fechaHoy;
             document.getElementById('disp-fecha').value = fechaHoy;
         };
-
+ 
         const cargarClinicas = async () => {
             try {
-                const res      = await fetch(`${GATEWAY}/api/v1/clinicas`);
+                const res      = await fetch(`${GATEWAY}/api/v1/clinicas`, { headers: NH });
                 const clinicas = await res.json();
                 const sel      = document.getElementById('disp-clinica');
                 sel.innerHTML  = '<option value="">Seleccioná una clínica</option>' +
@@ -321,7 +315,7 @@
                 document.getElementById('disp-clinica').innerHTML = '<option value="">Error al cargar clínicas</option>';
             }
         };
-
+ 
         const onCambioClinica = () => {
             const sel     = document.getElementById('disp-clinica');
             const id      = sel.value;
@@ -329,10 +323,10 @@
             const infoBox = document.getElementById('clinica-seleccionada-info');
             const selEsp  = document.getElementById('disp-especialidad');
             const hintEsp = document.getElementById('hint-esp');
-
+ 
             document.getElementById('resultado-disponibilidad').style.display = 'none';
             cerrarPanel();
-
+ 
             if (!id) {
                 infoBox.classList.remove('visible');
                 selEsp.innerHTML = '<option value="">— Primero elegí una clínica —</option>';
@@ -340,7 +334,7 @@
                 hintEsp.classList.add('visible');
                 return;
             }
-
+ 
             infoBox.textContent = texto;
             infoBox.classList.add('visible');
             selEsp.innerHTML = '<option value="">Todas las especialidades</option>' +
@@ -351,7 +345,7 @@
             document.getElementById('disp-tipo').disabled  = true;
             document.getElementById('hint-disp').classList.add('visible');
         };
-
+ 
         const filtrarEstudiosDisp = () => {
             const esp     = document.getElementById('disp-especialidad').value;
             const selTipo = document.getElementById('disp-tipo');
@@ -369,52 +363,52 @@
             hint.classList.remove('visible');
             document.getElementById('resultado-disponibilidad').style.display = 'none';
         };
-
+ 
         const mostrarMensaje = (id, texto, tipo) => {
             const el = document.getElementById(id);
             el.textContent = texto; el.className = `mensaje ${tipo}`; el.style.display = 'block';
             setTimeout(() => el.style.display = 'none', 5000);
         };
-
+ 
         const sumarMinutos = (horaStr, minutos) => {
             const [h, m] = horaStr.split(':').map(Number);
             const total  = h * 60 + m + minutos;
             return `${String(Math.floor(total/60)%24).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
         };
-
+ 
         const verificarServicios = async () => {
-            try { await fetch(`${GATEWAY}/health`); document.getElementById('dot-gateway').classList.add('activo'); } catch {}
-            try { await fetch(`${GATEWAY}/api/v1/pacientes`); document.getElementById('dot-pacientes').classList.add('activo'); } catch {}
-            try { await fetch(`${GATEWAY}/api/v1/turnos`); document.getElementById('dot-agenda').classList.add('activo'); } catch {}
+            try { await fetch(`${GATEWAY}/health`, { headers: NH }); document.getElementById('dot-gateway').classList.add('activo'); } catch {}
+            try { await fetch(`${GATEWAY}/api/v1/pacientes`, { headers: NH }); document.getElementById('dot-pacientes').classList.add('activo'); } catch {}
+            try { await fetch(`${GATEWAY}/api/v1/turnos`, { headers: NH }); document.getElementById('dot-agenda').classList.add('activo'); } catch {}
         };
-
+ 
         const consultarDisponibilidad = async () => {
             const id_clinica   = document.getElementById('disp-clinica').value;
             const tipo         = document.getElementById('disp-tipo').value;
             const fecha        = document.getElementById('disp-fecha').value;
             const especialidad = document.getElementById('disp-especialidad').value;
-
+ 
             if (!id_clinica) { mostrarMensaje('msg-disponibilidad', 'Seleccioná una clínica', 'error'); return; }
             if (!tipo)       { mostrarMensaje('msg-disponibilidad', 'Seleccioná un tipo de estudio', 'error'); return; }
             if (!fecha)      { mostrarMensaje('msg-disponibilidad', 'Seleccioná una fecha', 'error'); return; }
-
+ 
             cerrarPanel();
-
+ 
             try {
                 let url = `${GATEWAY}/api/v1/turnos/disponibilidad?fecha=${fecha}&tipo_estudio=${tipo}&id_clinica=${id_clinica}`;
                 if (especialidad) url += `&especialidad=${encodeURIComponent(especialidad)}`;
-
-                const res  = await fetch(url);
+ 
+                const res  = await fetch(url, { headers: NH });
                 const data = await res.json();
                 if (!res.ok) { mostrarMensaje('msg-disponibilidad', data.mensaje || 'Error', 'error'); return; }
-
+ 
                 datosDisponibilidad = data;
-
+ 
                 document.getElementById('disp-duracion').textContent    = data.duracion_minutos;
                 document.getElementById('disp-preparacion').textContent = data.tiempo_preparacion_minutos;
                 document.getElementById('disp-medicos').textContent     = data.profesionales.filter(p => p.horarios.some(h => h.disponible)).length;
                 document.getElementById('disp-stock').textContent       = data.stock_insumo !== null ? data.stock_insumo : '—';
-
+ 
                 const avisoInsumo = document.getElementById('insumo-aviso');
                 if (data.insumo_especial_requerido) {
                     document.getElementById('insumo-nombre').textContent        = data.insumo_especial_requerido;
@@ -423,7 +417,7 @@
                 } else {
                     avisoInsumo.style.display = 'none';
                 }
-
+ 
                 document.getElementById('bloques-profesionales').innerHTML = data.profesionales.length === 0
                     ? '<p style="color:#999;font-size:13px;padding:10px 0;">No hay médicos de esa especialidad en esta clínica.</p>'
                     : data.profesionales.map(prof => {
@@ -454,12 +448,12 @@
                             <div class="horarios-grid">${slots}</div>
                         </div>`;
                     }).join('');
-
+ 
                 document.getElementById('resultado-disponibilidad').style.display = 'block';
-
+ 
             } catch { mostrarMensaje('msg-disponibilidad', 'No se pudo conectar con el servidor', 'error'); }
         };
-
+ 
         const seleccionarHorario = (idProf, nombreProf, especialidad, fecha, hora, tipoEstudio, elemento) => {
             document.querySelectorAll('.horario-slot.seleccionado').forEach(el => {
                 el.classList.remove('seleccionado');
@@ -469,9 +463,9 @@
             elemento.classList.add('seleccionado');
             elemento.querySelector('.slot-estado').textContent = 'Seleccionado';
             elemento.querySelector('.slot-icono').textContent  = '✅';
-
+ 
             slotSeleccionado = { idProf, nombreProf, especialidad, fecha, hora, tipoEstudio };
-
+ 
             const fin = sumarMinutos(hora, datosDisponibilidad.duracion_minutos);
             document.getElementById('panel-resumen').innerHTML =
                 `<strong>Clínica:</strong> ${datosDisponibilidad.clinica.nombre} &nbsp;·&nbsp;
@@ -480,7 +474,7 @@
                 <strong>Estudio:</strong> ${tipoEstudio} &nbsp;·&nbsp;
                 <strong>Fecha:</strong> ${fecha} &nbsp;·&nbsp;
                 <strong>Horario:</strong> ${hora} → ${fin}`;
-
+ 
             const selCons = document.getElementById('select-consultorio');
             const consultoriosLibres = (datosDisponibilidad.consultorios || [])
                 .filter(c => c.horarios.find(h => h.hora_inicio === hora)?.disponible);
@@ -488,7 +482,7 @@
                 ? '<option value="">Seleccioná un consultorio</option>' +
                     consultoriosLibres.map(c => `<option value="${c.id_consultorio}">${c.nombre} (${c.tipo})</option>`).join('')
                 : '<option value="">Sin consultorios disponibles</option>';
-
+ 
             const grupoEquipo = document.getElementById('grupo-equipo');
             const selEquip    = document.getElementById('select-equipo');
             if (datosDisponibilidad.equipos && datosDisponibilidad.equipos.length > 0) {
@@ -503,12 +497,12 @@
                 grupoEquipo.style.display = 'none';
                 selEquip.innerHTML = '<option value="">No requerido</option>';
             }
-
+ 
             const panel = document.getElementById('panel-confirmacion');
             panel.classList.add('visible');
             setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
         };
-
+ 
         const cerrarPanel = () => {
             document.getElementById('panel-confirmacion').classList.remove('visible');
             document.getElementById('resultado-busqueda-panel').style.display = 'none';
@@ -522,12 +516,12 @@
             });
             slotSeleccionado = null;
         };
-
+ 
         const buscarPacientePanel = async () => {
             const documento = document.getElementById('doc-buscar-panel').value.trim();
             if (!documento) { mostrarMensaje('msg-panel', 'Escribe un número de documento', 'error'); return; }
             try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`);
+                const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`, { headers: NH });
                 if (!res.ok) throw new Error();
                 const paciente = await res.json();
                 document.getElementById('nombre-paciente-panel').textContent = `${paciente.nombre} ${paciente.apellido} — Doc: ${paciente.documento}`;
@@ -538,17 +532,17 @@
                 mostrarMensaje('msg-panel', 'No se encontró ningún paciente con ese documento', 'error');
             }
         };
-
+ 
         const confirmarTurnoDesdePanel = async () => {
             if (!slotSeleccionado) return;
             const id_paciente    = document.getElementById('id-paciente-panel').value;
             const id_consultorio = document.getElementById('select-consultorio').value;
             const id_equipo      = document.getElementById('select-equipo').value;
             const obra_social    = document.getElementById('obra-social-panel').value;
-
+ 
             if (!id_paciente)    { mostrarMensaje('msg-panel', 'Buscá y seleccioná un paciente', 'error'); return; }
             if (!id_consultorio) { mostrarMensaje('msg-panel', 'Seleccioná un consultorio disponible', 'error'); return; }
-
+ 
             const { idProf, especialidad, fecha, hora, tipoEstudio } = slotSeleccionado;
             const body = {
                 id_paciente,
@@ -561,9 +555,13 @@
             };
             if (id_equipo && id_equipo !== '') body.id_equipo   = parseInt(id_equipo);
             if (obra_social)                   body.obra_social = obra_social;
-
+ 
             try {
-                const res  = await fetch(`${GATEWAY}/api/v1/turnos`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+                const res  = await fetch(`${GATEWAY}/api/v1/turnos`, {
+                    method: 'POST',
+                    headers: { ...NH, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
                 const data = await res.json();
                 if (res.ok) {
                     mostrarMensaje('msg-disponibilidad', 'Turno agendado exitosamente', 'exito');
@@ -575,13 +573,13 @@
                 }
             } catch { mostrarMensaje('msg-panel', 'No se pudo conectar con el servidor', 'error'); }
         };
-
+ 
         const cancelarTurno = async (id_turno, version) => {
             if (!confirm('¿Estás seguro de que quieres cancelar este turno?')) return;
             try {
                 const res  = await fetch(`${GATEWAY}/api/v1/turnos/${id_turno}`, {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { ...NH, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ version })
                 });
                 const data = await res.json();
@@ -595,27 +593,27 @@
                 alert('No se pudo conectar con el servidor');
             }
         };
-
+ 
         const irAResultados = (id_turno) => {
             localStorage.setItem('mt_turno_resultado', id_turno);
             window.location.href = 'resultados.html';
         };
-
+ 
         const cargarTurnos = async () => {
             const tbody = document.getElementById('tabla-turnos');
             try {
                 const url = esMedico && usuarioActual.id_profesional
                     ? `${GATEWAY}/api/v1/turnos/profesional/${usuarioActual.id_profesional}`
                     : `${GATEWAY}/api/v1/turnos`;
-
-                const res    = await fetch(url);
+ 
+                const res    = await fetch(url, { headers: NH });
                 const turnos = await res.json();
-
+ 
                 if (!res.ok || !turnos.length) {
                     tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:#999;">${esMedico ? 'No tenés turnos agendados' : 'No hay turnos agendados'}</td></tr>`;
                     return;
                 }
-
+ 
                 tbody.innerHTML = turnos.map(t => {
                     const fin         = t.duracion_minutos ? sumarMinutos(t.hora, t.duracion_minutos) : '—';
                     const idCorto     = t.id_turno.slice(0, 8) + '...';
@@ -649,7 +647,7 @@
                 tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:red;">Error al cargar turnos</td></tr>';
             }
         };
-
+ 
         setFechaMinima();
         verificarServicios();
         cargarClinicas();

@@ -47,24 +47,11 @@
         .btn-toggle.activar { background: #34a853; }
         .btn-toggle.activar:hover { background: #2d8f47; }
         .checkbox-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+            padding: 10px; border: 1px solid #ddd; border-radius: 5px;
         }
-        .checkbox-grid label {
-            font-weight: normal;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-        .checkbox-grid input[type="checkbox"] {
-            width: auto;
-            padding: 0;
-        }
+        .checkbox-grid label { font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .checkbox-grid input[type="checkbox"] { width: auto; padding: 0; }
     </style>
     <script src="auth.js"></script>
 </head>
@@ -73,19 +60,19 @@
     <h1>MediTurnos — Gestión de Usuarios</h1>
     <p>Administración de cuentas del sistema</p>
 </header>
-
+ 
 <div class="container">
     <a class="nav-back" href="index.html">← Volver al sistema principal</a>
-
+ 
     <div class="seccion-titulo">Crear Cuenta de Médico</div>
-
+ 
     <div class="card">
         <h2>Nueva cuenta</h2>
-
+ 
         <div class="info-box">
             🩺 Al crear una cuenta de médico, el sistema registra automáticamente al profesional en el sistema de agenda y crea sus credenciales de acceso.
         </div>
-
+ 
         <div class="form-row">
             <div class="form-group">
                 <label>Nombre</label>
@@ -96,7 +83,7 @@
                 <input type="text" id="nuevo-apellido" placeholder="Apellido del médico">
             </div>
         </div>
-
+ 
         <div class="form-row">
             <div class="form-group">
                 <label>Especialidad</label>
@@ -123,7 +110,7 @@
                 </select>
             </div>
         </div>
-
+ 
         <div class="form-group">
             <label>Obras sociales aceptadas</label>
             <div class="checkbox-grid">
@@ -137,23 +124,23 @@
                 <label><input type="checkbox" value="Particular"> Particular</label>
             </div>
         </div>
-
+ 
         <div class="form-group">
             <label>Correo electrónico</label>
             <input type="email" id="nuevo-email" placeholder="correo@mediturnos.com">
         </div>
-
+ 
         <div class="form-group">
             <label>Contraseña temporal</label>
             <input type="text" id="nuevo-password" placeholder="Mínimo 6 caracteres">
         </div>
-
+ 
         <button onclick="crearMedico()">Crear cuenta de médico</button>
         <div class="mensaje" id="msg-crear"></div>
     </div>
-
+ 
     <div class="seccion-titulo">Profesionales Registrados</div>
-
+ 
     <div class="card">
         <h2>Lista de profesionales en agenda</h2>
         <p style="font-size:13px;color:#888;margin-bottom:15px;">Lista de todos los profesionales registrados en el sistema.</p>
@@ -161,11 +148,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Especialidad</th>
-                    <th>Clínica</th>
-                    <th>Tiene cuenta</th>
+                    <th>ID</th><th>Nombre</th><th>Especialidad</th><th>Clínica</th><th>Tiene cuenta</th>
                 </tr>
             </thead>
             <tbody id="tabla-profesionales">
@@ -173,21 +156,16 @@
             </tbody>
         </table>
     </div>
-
+ 
     <div class="seccion-titulo">Usuarios del Sistema</div>
-
+ 
     <div class="card">
         <h2>Cuentas registradas</h2>
         <button onclick="cargarUsuarios()" style="width:auto;padding:10px 20px;margin-bottom:10px;">Actualizar lista</button>
         <table>
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Rol</th>
-                    <th>ID Profesional</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
+                    <th>Nombre</th><th>Email</th><th>Rol</th><th>ID Profesional</th><th>Estado</th><th>Acción</th>
                 </tr>
             </thead>
             <tbody id="tabla-usuarios">
@@ -195,17 +173,18 @@
             </tbody>
         </table>
     </div>
-
+ 
 </div>
-
+ 
 <script>
     const usuarioActual = Auth.verificar(['admin']);
     Auth.inyectarHeader('Usuarios');
     Auth.aplicarPermisos(usuarioActual);
-
-    const GATEWAY = 'http://172.25.66.107';
-    const token = () => localStorage.getItem('mt_token');
-
+ 
+    const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
+    const NH      = { 'ngrok-skip-browser-warning': 'true' };
+    const token   = () => localStorage.getItem('mt_token');
+ 
     const mostrarMensaje = (id, texto, tipo) => {
         const el = document.getElementById(id);
         el.textContent = texto;
@@ -213,11 +192,10 @@
         el.style.display = 'block';
         setTimeout(() => el.style.display = 'none', 5000);
     };
-
-    // ── Cargar clínicas en el dropdown ────────────────────────────────────────
+ 
     const cargarClinicas = async () => {
         try {
-            const res = await fetch(`${GATEWAY}/api/v1/clinicas`);
+            const res = await fetch(`${GATEWAY}/api/v1/clinicas`, { headers: NH });
             const clinicas = await res.json();
             const select = document.getElementById('nuevo-clinica');
             select.innerHTML = '<option value="">Selecciona una clínica</option>';
@@ -231,8 +209,7 @@
             document.getElementById('nuevo-clinica').innerHTML = '<option value="">Error al cargar clínicas</option>';
         }
     };
-
-    // ── Crear cuenta de médico ────────────────────────────────────────────────
+ 
     const crearMedico = async () => {
         const nombre       = document.getElementById('nuevo-nombre').value.trim();
         const apellido     = document.getElementById('nuevo-apellido').value.trim();
@@ -240,25 +217,22 @@
         const id_clinica   = document.getElementById('nuevo-clinica').value;
         const email        = document.getElementById('nuevo-email').value.trim();
         const password     = document.getElementById('nuevo-password').value;
-
+ 
         const obras_sociales_aceptadas = Array.from(
             document.querySelectorAll('input[type="checkbox"]:checked')
         ).map(cb => cb.value);
-
+ 
         if (!nombre || !apellido || !especialidad || !id_clinica || !email || !password) {
             mostrarMensaje('msg-crear', 'Completá todos los campos obligatorios', 'error'); return;
         }
         if (password.length < 6) {
             mostrarMensaje('msg-crear', 'La contraseña debe tener al menos 6 caracteres', 'error'); return;
         }
-
+ 
         try {
             const res = await fetch(`${GATEWAY}/api/v1/auth/registro-medico`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token()}`
-                },
+                headers: { ...NH, 'Content-Type': 'application/json', 'Authorization': `Bearer ${token()}` },
                 body: JSON.stringify({
                     nombre, apellido, especialidad,
                     id_clinica: parseInt(id_clinica),
@@ -267,7 +241,7 @@
                 })
             });
             const data = await res.json();
-
+ 
             if (res.ok) {
                 mostrarMensaje('msg-crear', `✓ Médico ${nombre} ${apellido} registrado. Puede iniciar sesión con ${email}`, 'exito');
                 document.getElementById('nuevo-nombre').value       = '';
@@ -286,34 +260,33 @@
             mostrarMensaje('msg-crear', 'No se pudo conectar con el servidor', 'error');
         }
     };
-
-    // ── Cargar profesionales de agenda ────────────────────────────────────────
+ 
     const cargarProfesionales = async () => {
         try {
             const resUsuarios = await fetch(`${GATEWAY}/api/v1/auth/usuarios`, {
-                headers: { 'Authorization': `Bearer ${token()}` }
+                headers: { ...NH, 'Authorization': `Bearer ${token()}` }
             });
             const usuarios = resUsuarios.ok ? await resUsuarios.json() : [];
             const idsConCuenta = new Set(usuarios.filter(u => u.id_profesional).map(u => u.id_profesional));
-
+ 
             const res = await fetch(`${GATEWAY}/api/v1/profesionales`, {
-                headers: { 'Authorization': `Bearer ${token()}` }
+                headers: { ...NH, 'Authorization': `Bearer ${token()}` }
             });
-
+ 
             if (!res.ok) {
                 document.getElementById('tabla-profesionales').innerHTML =
                     '<tr><td colspan="5" style="text-align:center;color:#888;">No se pudieron cargar los profesionales</td></tr>';
                 return;
             }
-
+ 
             const profesionales = await res.json();
             const tbody = document.getElementById('tabla-profesionales');
-
+ 
             if (!profesionales.length) {
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No hay profesionales registrados</td></tr>';
                 return;
             }
-
+ 
             tbody.innerHTML = profesionales.map(p => {
                 const tieneCuenta = idsConCuenta.has(p.id_profesional);
                 return `<tr>
@@ -332,21 +305,20 @@
                 '<tr><td colspan="5" style="text-align:center;color:red;">Error al cargar profesionales</td></tr>';
         }
     };
-
-    // ── Cargar usuarios del sistema ───────────────────────────────────────────
+ 
     const cargarUsuarios = async () => {
         try {
             const res = await fetch(`${GATEWAY}/api/v1/auth/usuarios`, {
-                headers: { 'Authorization': `Bearer ${token()}` }
+                headers: { ...NH, 'Authorization': `Bearer ${token()}` }
             });
             const usuarios = await res.json();
             const tbody = document.getElementById('tabla-usuarios');
-
+ 
             if (!res.ok || !usuarios.length) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">No hay usuarios registrados</td></tr>';
                 return;
             }
-
+ 
             tbody.innerHTML = usuarios.map(u => `<tr>
                 <td>${u.nombre} ${u.apellido}</td>
                 <td>${u.email}</td>
@@ -366,16 +338,15 @@
                 '<tr><td colspan="6" style="text-align:center;color:red;">Error al cargar usuarios</td></tr>';
         }
     };
-
-    // ── Activar / desactivar usuario ──────────────────────────────────────────
+ 
     const toggleUsuario = async (id_usuario, activo_actual) => {
         const accion = activo_actual ? 'desactivar' : 'activar';
         if (!confirm(`¿Estás seguro de que querés ${accion} este usuario?`)) return;
-
+ 
         try {
             const res = await fetch(`${GATEWAY}/api/v1/auth/usuarios/${id_usuario}/toggle`, {
                 method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token()}` }
+                headers: { ...NH, 'Authorization': `Bearer ${token()}` }
             });
             if (res.ok) cargarUsuarios();
             else alert('Error al actualizar el usuario');
@@ -383,7 +354,7 @@
             alert('No se pudo conectar con el servidor');
         }
     };
-
+ 
     cargarUsuarios();
     cargarProfesionales();
     cargarClinicas();

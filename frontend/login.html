@@ -15,285 +15,60 @@
             --texto: #1a1a2e;
             --texto-suave: #6b7280;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--gris);
-            min-height: 100vh;
-            display: flex;
-        }
-
-        /* Panel izquierdo decorativo */
+        body { font-family: 'DM Sans', sans-serif; background: var(--gris); min-height: 100vh; display: flex; }
         .panel-izquierdo {
             width: 45%;
             background: linear-gradient(145deg, #0d47a1 0%, #1a73e8 50%, #1565c0 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 60px;
-            position: relative;
-            overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: flex-start; padding: 60px; position: relative; overflow: hidden;
         }
-
         .panel-izquierdo::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            top: -100px;
-            right: -100px;
+            content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); top: -100px; right: -100px;
         }
-
         .panel-izquierdo::after {
-            content: '';
-            position: absolute;
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.07);
-            bottom: -80px;
-            left: -60px;
+            content: ''; position: absolute; width: 250px; height: 250px; border-radius: 50%;
+            background: rgba(255,255,255,0.07); bottom: -80px; left: -60px;
         }
-
-        .logo-panel {
-            font-family: 'Playfair Display', serif;
-            font-size: 38px;
-            color: white;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .logo-panel span {
-            color: #90caf9;
-        }
-
-        .subtitulo-panel {
-            font-size: 14px;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 50px;
-            position: relative;
-            z-index: 1;
-            letter-spacing: 0.5px;
-        }
-
-        .feature-list {
-            list-style: none;
-            position: relative;
-            z-index: 1;
-        }
-
-        .feature-list li {
-            color: rgba(255,255,255,0.85);
-            font-size: 14px;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .feature-list li::before {
-            content: '✦';
-            color: #90caf9;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-
-        .roles-badge {
-            display: flex;
-            gap: 10px;
-            margin-top: 50px;
-            position: relative;
-            z-index: 1;
-            flex-wrap: wrap;
-        }
-
-        .rol-chip {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.25);
-            color: white;
-            font-size: 12px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            backdrop-filter: blur(4px);
-        }
-
-        /* Panel derecho - formulario */
-        .panel-derecho {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-        }
-
-        .login-box {
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .login-box h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            color: var(--texto);
-            margin-bottom: 8px;
-        }
-
-        .login-box p {
-            color: var(--texto-suave);
-            font-size: 14px;
-            margin-bottom: 32px;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #e5e7eb;
-            margin-bottom: 28px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--texto-suave);
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
-        }
-
-        .tab.activo {
-            color: var(--azul);
-            border-bottom-color: var(--azul);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--texto);
-            margin-bottom: 7px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'DM Sans', sans-serif;
-            color: var(--texto);
-            transition: border 0.2s;
-            background: white;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--azul);
-            box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 13px;
-            background: var(--azul);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.2s;
-            letter-spacing: 0.3px;
-        }
-
-        .btn-primary:hover {
-            background: var(--azul-oscuro);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(26,115,232,0.3);
-        }
-
-        .mensaje {
-            padding: 12px 14px;
-            border-radius: 8px;
-            margin-top: 14px;
-            font-size: 13px;
-            display: none;
-            text-align: center;
-        }
-
-        .mensaje.error {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fca5a5;
-        }
-
-        .mensaje.exito {
-            background: #f0fdf4;
-            color: #16a34a;
-            border: 1px solid #86efac;
-        }
-
-        .campo-oculto { display: none; }
-
-        .info-box {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            padding: 12px 14px;
-            font-size: 12px;
-            color: #1e40af;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .divisor {
-            border: none;
-            border-top: 1px solid #e5e7eb;
-            margin: 20px 0;
-        }
-
-        @media (max-width: 768px) {
-            .panel-izquierdo { display: none; }
-            .panel-derecho { padding: 30px 20px; }
-        }
+        .logo-panel { font-family: 'Playfair Display', serif; font-size: 38px; color: white; margin-bottom: 12px; position: relative; z-index: 1; }
+        .logo-panel span { color: #90caf9; }
+        .subtitulo-panel { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 50px; position: relative; z-index: 1; letter-spacing: 0.5px; }
+        .feature-list { list-style: none; position: relative; z-index: 1; }
+        .feature-list li { color: rgba(255,255,255,0.85); font-size: 14px; margin-bottom: 18px; display: flex; align-items: center; gap: 12px; }
+        .feature-list li::before { content: '✦'; color: #90caf9; font-size: 12px; flex-shrink: 0; }
+        .roles-badge { display: flex; gap: 10px; margin-top: 50px; position: relative; z-index: 1; flex-wrap: wrap; }
+        .rol-chip { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; font-size: 12px; padding: 6px 14px; border-radius: 20px; }
+        .panel-derecho { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; }
+        .login-box { width: 100%; max-width: 420px; }
+        .login-box h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--texto); margin-bottom: 8px; }
+        .login-box p { color: var(--texto-suave); font-size: 14px; margin-bottom: 32px; }
+        .tabs { display: flex; border-bottom: 2px solid #e5e7eb; margin-bottom: 28px; }
+        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--texto-suave); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+        .tab.activo { color: var(--azul); border-bottom-color: var(--azul); }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--texto); margin-bottom: 7px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--texto); transition: border 0.2s; background: white; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .btn-primary { width: 100%; padding: 13px; background: var(--azul); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 8px; transition: all 0.2s; letter-spacing: 0.3px; }
+        .btn-primary:hover { background: var(--azul-oscuro); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,115,232,0.3); }
+        .mensaje { padding: 12px 14px; border-radius: 8px; margin-top: 14px; font-size: 13px; display: none; text-align: center; }
+        .mensaje.error { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+        .mensaje.exito { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+        .info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #1e40af; margin-bottom: 20px; line-height: 1.6; }
+        @media (max-width: 768px) { .panel-izquierdo { display: none; } .panel-derecho { padding: 30px 20px; } }
     </style>
 </head>
 <body>
-
-<!-- Panel izquierdo -->
 <div class="panel-izquierdo">
     <div class="logo-panel">Medi<span>Turnos</span></div>
     <p class="subtitulo-panel">Sistema de gestión de turnos médicos</p>
-
     <ul class="feature-list">
         <li>Gestión de pacientes y coberturas médicas</li>
         <li>Agenda de turnos con disponibilidad en tiempo real</li>
         <li>Resultados clínicos e imágenes diagnósticas</li>
     </ul>
-
     <div class="roles-badge">
         <span class="rol-chip">👤 Paciente</span>
         <span class="rol-chip">🩺 Médico</span>
@@ -301,125 +76,82 @@
     </div>
 </div>
 
-<!-- Panel derecho -->
 <div class="panel-derecho">
     <div class="login-box">
-
         <h2>Bienvenido</h2>
         <p>Ingresa a tu cuenta para continuar</p>
-
         <div class="tabs">
             <div class="tab activo" onclick="cambiarTab('login')">Iniciar Sesión</div>
             <div class="tab" onclick="cambiarTab('registro')">Registrarse</div>
         </div>
 
-        <!-- LOGIN -->
         <div id="form-login">
-            <div class="info-box">
-                🔐 Serás redirigido automáticamente según tu rol en el sistema.
-            </div>
+            <div class="info-box">🔐 Serás redirigido automáticamente según tu rol en el sistema.</div>
             <div class="form-group">
                 <label>Correo electrónico</label>
                 <input type="email" id="login-email" placeholder="correo@email.com">
             </div>
             <div class="form-group">
                 <label>Contraseña</label>
-                <input type="password" id="login-password" placeholder="••••••••"
-                    onkeydown="if(event.key==='Enter') iniciarSesion()">
+                <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') iniciarSesion()">
             </div>
             <button class="btn-primary" onclick="iniciarSesion()">Iniciar Sesión</button>
             <div class="mensaje" id="msg-login"></div>
         </div>
 
-        <!-- REGISTRO -->
         <div id="form-registro" style="display:none;">
-    <div class="form-group">
-        <label>Tipo de cuenta</label>
-        <select id="reg-rol" onchange="cambiarRol()">
-            <option value="paciente">Paciente</option>
-            <option value="medico">Médico</option>
-        </select>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label>Nombre</label>
-            <input type="text" id="reg-nombre" placeholder="Nombre">
-        </div>
-        <div class="form-group">
-            <label>Apellido</label>
-            <input type="text" id="reg-apellido" placeholder="Apellido">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>Correo electrónico</label>
-        <input type="email" id="reg-email" placeholder="correo@email.com">
-    </div>
-
-    <div class="form-group">
-        <label>Contraseña</label>
-        <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres">
-    </div>
-
-    <!-- Campos solo para paciente -->
-    <div id="campos-paciente">
-        <div class="form-row">
             <div class="form-group">
-                <label>Documento</label>
-                <input type="text" id="reg-documento" placeholder="Número de documento">
+                <label>Tipo de cuenta</label>
+                <select id="reg-rol" onchange="cambiarRol()">
+                    <option value="paciente">Paciente</option>
+                    <option value="medico">Médico</option>
+                </select>
             </div>
-            <div class="form-group">
-                <label>Fecha de nacimiento</label>
-                <input type="date" id="reg-fecha-nacimiento">
+            <div class="form-row">
+                <div class="form-group"><label>Nombre</label><input type="text" id="reg-nombre" placeholder="Nombre"></div>
+                <div class="form-group"><label>Apellido</label><input type="text" id="reg-apellido" placeholder="Apellido"></div>
             </div>
+            <div class="form-group"><label>Correo electrónico</label><input type="email" id="reg-email" placeholder="correo@email.com"></div>
+            <div class="form-group"><label>Contraseña</label><input type="password" id="reg-password" placeholder="Mínimo 6 caracteres"></div>
+            <div id="campos-paciente">
+                <div class="form-row">
+                    <div class="form-group"><label>Documento</label><input type="text" id="reg-documento" placeholder="Número de documento"></div>
+                    <div class="form-group"><label>Fecha de nacimiento</label><input type="date" id="reg-fecha-nacimiento"></div>
+                </div>
+                <div class="form-group"><label>Teléfono (opcional)</label><input type="text" id="reg-telefono" placeholder="Teléfono"></div>
+            </div>
+            <div id="campos-medico" style="display:none;">
+                <div class="info-box">🩺 Tu cuenta se vinculará automáticamente con tu perfil de profesional usando tu nombre y apellido.</div>
+                <div class="form-group">
+                    <label>Especialidad</label>
+                    <select id="reg-especialidad">
+                        <option value="">Selecciona tu especialidad</option>
+                        <option value="radiologia">Radiología</option>
+                        <option value="ecografia">Ecografía</option>
+                        <option value="tomografia">Tomografía</option>
+                        <option value="resonancia">Resonancia</option>
+                        <option value="mamografia">Mamografía</option>
+                        <option value="densitometria">Densitometría</option>
+                        <option value="electrocardiograma">Electrocardiograma</option>
+                        <option value="laboratorio">Laboratorio</option>
+                        <option value="general">General</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="registrarse()">Crear Cuenta</button>
+            <div class="mensaje" id="msg-registro"></div>
         </div>
-        <div class="form-group">
-            <label>Teléfono (opcional)</label>
-            <input type="text" id="reg-telefono" placeholder="Teléfono">
-        </div>
-    </div>
-
-    <!-- Campos solo para médico -->
-    <div id="campos-medico" style="display:none;">
-        <div class="info-box">
-            🩺 Tu cuenta se vinculará automáticamente con tu perfil de profesional en el sistema usando tu nombre y apellido.
-        </div>
-        <div class="form-group">
-            <label>Especialidad</label>
-            <select id="reg-especialidad">
-                <option value="">Selecciona tu especialidad</option>
-                <option value="radiologia">Radiología</option>
-                <option value="ecografia">Ecografía</option>
-                <option value="tomografia">Tomografía</option>
-                <option value="resonancia">Resonancia</option>
-                <option value="mamografia">Mamografía</option>
-                <option value="densitometria">Densitometría</option>
-                <option value="electrocardiograma">Electrocardiograma</option>
-                <option value="laboratorio">Laboratorio</option>
-                <option value="general">General</option>
-            </select>
-        </div>
-    </div>
-
-    <button class="btn-primary" onclick="registrarse()">Crear Cuenta</button>
-    <div class="mensaje" id="msg-registro"></div>
-</div>
-
     </div>
 </div>
 
 <script>
-    const GATEWAY = 'http://172.25.66.107';
+    const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
+    const NGROK_HEADER = { 'ngrok-skip-browser-warning': 'true' };
 
-    // Si ya hay sesión activa, redirigir
     const tokenGuardado = localStorage.getItem('mt_token');
     const usuarioGuardado = localStorage.getItem('mt_usuario');
     if (tokenGuardado && usuarioGuardado) {
-        try {
-            const u = JSON.parse(usuarioGuardado);
-            redirigirSegunRol(u.rol);
-        } catch { localStorage.clear(); }
+        try { const u = JSON.parse(usuarioGuardado); redirigirSegunRol(u.rol); } catch { localStorage.clear(); }
     }
 
     function cambiarTab(tab) {
@@ -431,41 +163,33 @@
     }
 
     function cambiarRol() {
-    const rol = document.getElementById('reg-rol').value;
-    document.getElementById('campos-paciente').style.display = rol === 'paciente' ? 'block' : 'none';
-    document.getElementById('campos-medico').style.display   = rol === 'medico'   ? 'block' : 'none';
+        const rol = document.getElementById('reg-rol').value;
+        document.getElementById('campos-paciente').style.display = rol === 'paciente' ? 'block' : 'none';
+        document.getElementById('campos-medico').style.display   = rol === 'medico'   ? 'block' : 'none';
     }
 
     function mostrarMensaje(id, texto, tipo) {
         const el = document.getElementById(id);
-        el.textContent = texto;
-        el.className = `mensaje ${tipo}`;
-        el.style.display = 'block';
+        el.textContent = texto; el.className = `mensaje ${tipo}`; el.style.display = 'block';
     }
 
     function redirigirSegunRol(rol) {
         if (rol === 'admin') window.location.href = 'index.html';
-        else if (rol === 'medico') window.location.href = 'Agenda.html';
+        else if (rol === 'medico') window.location.href = 'agenda.html';
         else window.location.href = 'paciente-portal.html';
     }
 
     async function iniciarSesion() {
-        const email = document.getElementById('login-email').value.trim();
+        const email    = document.getElementById('login-email').value.trim();
         const password = document.getElementById('login-password').value;
-
-        if (!email || !password) {
-            mostrarMensaje('msg-login', 'Por favor completa todos los campos', 'error');
-            return;
-        }
-
+        if (!email || !password) { mostrarMensaje('msg-login', 'Por favor completa todos los campos', 'error'); return; }
         try {
             const res = await fetch(`${GATEWAY}/api/v1/auth/login`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...NGROK_HEADER },
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-
             if (res.ok) {
                 localStorage.setItem('mt_token', data.token);
                 localStorage.setItem('mt_usuario', JSON.stringify(data.usuario));
@@ -474,67 +198,41 @@
             } else {
                 mostrarMensaje('msg-login', data.mensaje || 'Credenciales incorrectas', 'error');
             }
-        } catch {
-            mostrarMensaje('msg-login', 'No se pudo conectar con el servidor', 'error');
-        }
+        } catch { mostrarMensaje('msg-login', 'No se pudo conectar con el servidor', 'error'); }
     }
 
     async function registrarse() {
-    const rol      = document.getElementById('reg-rol').value;
-    const nombre   = document.getElementById('reg-nombre').value.trim();
-    const apellido = document.getElementById('reg-apellido').value.trim();
-    const email    = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-
-    if (!nombre || !apellido || !email || !password) {
-        mostrarMensaje('msg-registro', 'Por favor completa todos los campos', 'error'); return;
-    }
-    if (password.length < 6) {
-        mostrarMensaje('msg-registro', 'La contraseña debe tener al menos 6 caracteres', 'error'); return;
-    }
-
-    const body = { nombre, apellido, email, password, rol };
-
-    if (rol === 'paciente') {
-        const documento        = document.getElementById('reg-documento').value.trim();
-        const fecha_nacimiento = document.getElementById('reg-fecha-nacimiento').value;
-        const telefono         = document.getElementById('reg-telefono').value.trim();
-
-        if (!documento || !fecha_nacimiento) {
-            mostrarMensaje('msg-registro', 'El documento y la fecha de nacimiento son obligatorios', 'error'); return;
+        const rol      = document.getElementById('reg-rol').value;
+        const nombre   = document.getElementById('reg-nombre').value.trim();
+        const apellido = document.getElementById('reg-apellido').value.trim();
+        const email    = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        if (!nombre || !apellido || !email || !password) { mostrarMensaje('msg-registro', 'Por favor completa todos los campos', 'error'); return; }
+        if (password.length < 6) { mostrarMensaje('msg-registro', 'La contraseña debe tener al menos 6 caracteres', 'error'); return; }
+        const body = { nombre, apellido, email, password, rol };
+        if (rol === 'paciente') {
+            const documento = document.getElementById('reg-documento').value.trim();
+            const fecha_nacimiento = document.getElementById('reg-fecha-nacimiento').value;
+            const telefono = document.getElementById('reg-telefono').value.trim();
+            if (!documento || !fecha_nacimiento) { mostrarMensaje('msg-registro', 'El documento y la fecha de nacimiento son obligatorios', 'error'); return; }
+            body.documento = documento; body.fecha_nacimiento = fecha_nacimiento; body.telefono = telefono || null;
         }
-        body.documento        = documento;
-        body.fecha_nacimiento = fecha_nacimiento;
-        body.telefono         = telefono || null;
-    }
-
-    if (rol === 'medico') {
-        const especialidad = document.getElementById('reg-especialidad').value;
-        if (!especialidad) {
-            mostrarMensaje('msg-registro', 'Selecciona tu especialidad', 'error'); return;
+        if (rol === 'medico') {
+            const especialidad = document.getElementById('reg-especialidad').value;
+            if (!especialidad) { mostrarMensaje('msg-registro', 'Selecciona tu especialidad', 'error'); return; }
+            body.especialidad = especialidad;
         }
-        body.especialidad = especialidad;
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/auth/registro`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...NGROK_HEADER },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (res.ok) { mostrarMensaje('msg-registro', 'Cuenta creada exitosamente. Ahora inicia sesión.', 'exito'); setTimeout(() => cambiarTab('login'), 1500); }
+            else mostrarMensaje('msg-registro', data.mensaje || 'Error al registrarse', 'error');
+        } catch { mostrarMensaje('msg-registro', 'No se pudo conectar con el servidor', 'error'); }
     }
-
-    try {
-        const res  = await fetch(`${GATEWAY}/api/v1/auth/registro`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-            mostrarMensaje('msg-registro', 'Cuenta creada exitosamente. Ahora inicia sesión.', 'exito');
-            setTimeout(() => cambiarTab('login'), 1500);
-        } else {
-            mostrarMensaje('msg-registro', data.mensaje || 'Error al registrarse', 'error');
-        }
-    } catch {
-        mostrarMensaje('msg-registro', 'No se pudo conectar con el servidor', 'error');
-    }
-}
 </script>
-
 </body>
 </html>

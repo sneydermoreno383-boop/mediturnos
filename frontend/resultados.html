@@ -15,12 +15,8 @@
         .card h2 { color: #1a73e8; margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;
-        }
-        .form-group input:disabled, .form-group select:disabled {
-            background: #f0f4f8; color: #555; cursor: not-allowed;
-        }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .form-group input:disabled, .form-group select:disabled { background: #f0f4f8; color: #555; cursor: not-allowed; }
         .form-group textarea { height: 80px; resize: vertical; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         button { background: #1a73e8; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; margin-top: 5px; }
@@ -36,7 +32,7 @@
         table tr:hover { background: #f8f9fa; }
         .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
         .badge.disponible { background: #d1e7dd; color: #0f5132; }
-        .badge.pendiente  { background: #fff3cd; color: #856404; }
+        .badge.pendiente { background: #fff3cd; color: #856404; }
         .nav-back { display: inline-block; margin-bottom: 20px; color: #1a73e8; font-size: 14px; text-decoration: none; }
         .nav-back:hover { text-decoration: underline; }
         .seccion-titulo { font-size: 22px; font-weight: bold; color: #1a73e8; margin: 30px 0 10px; border-left: 4px solid #1a73e8; padding-left: 10px; }
@@ -56,22 +52,15 @@
     <h1>MediTurnos — Resultados</h1>
     <p>Registro y consulta de resultados clínicos</p>
 </header>
-
 <div class="container">
-
     <a class="nav-back" id="nav-back-link" href="index.html">← Volver al sistema principal</a>
-
-    <!-- Banner cuando viene desde la agenda del médico -->
     <div class="precargado-banner" id="precargado-banner">
         <strong>Turno precargado desde tu agenda</strong>
         El turno fue cargado automáticamente. Completá la descripción y adjuntá los archivos del resultado.
     </div>
-
     <div class="seccion-titulo">Registrar Resultado</div>
-
     <div class="card">
         <h2>Nuevo Resultado</h2>
-
         <div class="form-group">
             <label>ID del Turno</label>
             <div style="display:flex;gap:10px;">
@@ -79,7 +68,6 @@
                 <button onclick="cargarDatosTurno()" style="width:auto;padding:10px 20px;margin-top:0;">Cargar turno</button>
             </div>
         </div>
-
         <div class="turno-info" id="turno-info-box">
             <span class="turno-ok">✓ Turno encontrado</span><br>
             <strong>Paciente:</strong> <span id="turno-nombre-paciente">—</span><br>
@@ -88,7 +76,6 @@
             <strong>Estudio:</strong> <span id="turno-estudio">—</span><br>
             <strong>Fecha del turno:</strong> <span id="turno-fecha">—</span>
         </div>
-
         <div class="form-row">
             <div class="form-group">
                 <label>Especialidad <span style="color:#34a853;font-size:11px;">(se llena automáticamente)</span></label>
@@ -114,26 +101,21 @@
                 <input type="date" id="fecha-resultado">
             </div>
         </div>
-
         <div class="form-group">
             <label>Descripción</label>
             <textarea id="descripcion-resultado" placeholder="Describí el resultado del estudio..."></textarea>
         </div>
-
         <div class="form-group">
             <label>Archivos adjuntos (PDF, imágenes, video MP4, DICOM — máx. 50MB c/u)</label>
-            <input type="file" id="archivos-resultado" multiple
-                accept=".pdf,.jpg,.jpeg,.png,.mp4,.dcm,application/dicom"
+            <input type="file" id="archivos-resultado" multiple accept=".pdf,.jpg,.jpeg,.png,.mp4,.dcm,application/dicom"
                 style="padding:8px;border:1px dashed #1a73e8;border-radius:5px;background:#f0f4f8;cursor:pointer;">
             <div id="lista-archivos" style="margin-top:8px;font-size:12px;color:#555;"></div>
         </div>
-
         <button onclick="crearResultado()">Registrar Resultado</button>
         <div class="mensaje" id="msg-resultado"></div>
     </div>
 
     <div class="seccion-titulo">Consultar Resultados</div>
-
     <div class="card">
         <h2>Ver Resultados por Paciente</h2>
         <div class="form-group">
@@ -145,21 +127,12 @@
         </div>
         <div class="mensaje" id="msg-ver-resultado"></div>
         <table>
-            <thead>
-                <tr>
-                    <th>Paciente</th>
-                    <th>Especialidad</th>
-                    <th>Descripción</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Paciente</th><th>Especialidad</th><th>Descripción</th><th>Fecha</th><th>Estado</th></tr></thead>
             <tbody id="tabla-resultados">
                 <tr><td colspan="5" style="text-align:center;color:#999;">Buscá un paciente para ver sus resultados</td></tr>
             </tbody>
         </table>
     </div>
-
 </div>
 
 <script>
@@ -168,11 +141,11 @@
     Auth.aplicarPermisos(usuarioActual);
 
     const esMedico = usuarioActual.rol === 'medico';
-    const GATEWAY = 'http://172.25.66.107';
+    const GATEWAY  = 'https://movable-raging-ice.ngrok-free.dev';
+    const NH       = { 'ngrok-skip-browser-warning': 'true' };
 
-    // Si viene desde la agenda del médico, cambiar el link de volver
     if (esMedico) {
-        document.getElementById('nav-back-link').href        = 'Agenda.html';
+        document.getElementById('nav-back-link').href        = 'agenda.html';
         document.getElementById('nav-back-link').textContent = '← Volver a mi agenda';
     }
 
@@ -184,38 +157,23 @@
         setTimeout(() => el.style.display = 'none', 5000);
     };
 
-    // ── Cargar datos del turno ────────────────────────────────────────────────
     const cargarDatosTurno = async () => {
         const id_turno = document.getElementById('id-turno-resultado').value.trim();
         if (!id_turno) { mostrarMensaje('msg-resultado', 'Pegá el ID del turno primero', 'error'); return; }
-
         try {
-            const res = await fetch(`${GATEWAY}/api/v1/turnos/${id_turno}`);
-            if (!res.ok) {
-                document.getElementById('turno-info-box').classList.remove('visible');
-                mostrarMensaje('msg-resultado', 'No se encontró ningún turno con ese ID', 'error');
-                return;
-            }
+            const res = await fetch(`${GATEWAY}/api/v1/turnos/${id_turno}`, { headers: NH });
+            if (!res.ok) { document.getElementById('turno-info-box').classList.remove('visible'); mostrarMensaje('msg-resultado', 'No se encontró ningún turno con ese ID', 'error'); return; }
             const turno = await res.json();
-
-            // Rellenar especialidad automáticamente
             const selectEsp = document.getElementById('especialidad-resultado');
             selectEsp.value = turno.especialidad || '';
             document.getElementById('badge-auto').style.display = turno.especialidad ? 'block' : 'none';
-
-            // Guardar id_paciente oculto para usarlo al registrar
-            document.getElementById('turno-id-paciente').textContent = turno.id_paciente;
-
-            // Mostrar info del turno
+            document.getElementById('turno-id-paciente').textContent    = turno.id_paciente;
             document.getElementById('turno-nombre-paciente').textContent = turno.nombre_paciente || '—';
             document.getElementById('turno-especialidad').textContent    = turno.especialidad    || '—';
             document.getElementById('turno-estudio').textContent         = turno.tipo_estudio    || '—';
             document.getElementById('turno-fecha').textContent           = turno.fecha           || '—';
             document.getElementById('turno-info-box').classList.add('visible');
-
-        } catch {
-            mostrarMensaje('msg-resultado', 'No se pudo conectar con el servidor', 'error');
-        }
+        } catch { mostrarMensaje('msg-resultado', 'No se pudo conectar con el servidor', 'error'); }
     };
 
     document.getElementById('id-turno-resultado').addEventListener('blur', () => {
@@ -223,14 +181,11 @@
         if (val.length > 30) cargarDatosTurno();
     });
 
-    // ── Crear resultado ───────────────────────────────────────────────────────
     const crearResultado = async () => {
         const id_turno        = document.getElementById('id-turno-resultado').value.trim();
         const especialidad    = document.getElementById('especialidad-resultado').value;
         const fecha_resultado = document.getElementById('fecha-resultado').value;
         const descripcion     = document.getElementById('descripcion-resultado').value.trim();
-
-        // Tomar id_paciente y nombre directamente del turno cargado
         const id_paciente     = document.getElementById('turno-id-paciente').textContent.trim();
         const nombre_paciente = document.getElementById('turno-nombre-paciente').textContent.trim();
 
@@ -239,20 +194,18 @@
         }
 
         const formData = new FormData();
-        formData.append('id_turno',        id_turno);
-        formData.append('id_paciente',     id_paciente);
+        formData.append('id_turno', id_turno);
+        formData.append('id_paciente', id_paciente);
         formData.append('nombre_paciente', nombre_paciente);
-        formData.append('especialidad',    especialidad);
+        formData.append('especialidad', especialidad);
         formData.append('fecha_resultado', fecha_resultado);
-        formData.append('descripcion',     descripcion);
-
+        formData.append('descripcion', descripcion);
         const archivosInput = document.getElementById('archivos-resultado');
-        for (const archivo of archivosInput.files) {
-            formData.append('archivos', archivo);
-        }
+        for (const archivo of archivosInput.files) formData.append('archivos', archivo);
 
         try {
-            const res  = await fetch(`${GATEWAY}/api/v1/resultados`, { method: 'POST', body: formData });
+            // Para FormData solo se agrega el header ngrok, NO Content-Type (el browser lo pone con boundary)
+            const res  = await fetch(`${GATEWAY}/api/v1/resultados`, { method: 'POST', headers: NH, body: formData });
             const data = await res.json();
             if (res.ok) {
                 mostrarMensaje('msg-resultado', '✓ Resultado registrado exitosamente', 'exito');
@@ -265,44 +218,29 @@
                 document.getElementById('especialidad-resultado').value  = '';
                 document.getElementById('turno-id-paciente').textContent = '—';
                 localStorage.removeItem('mt_turno_resultado');
-            } else {
-                mostrarMensaje('msg-resultado', data.mensaje || 'Error al registrar', 'error');
-            }
-        } catch {
-            mostrarMensaje('msg-resultado', 'No se pudo conectar con el servidor', 'error');
-        }
+            } else { mostrarMensaje('msg-resultado', data.mensaje || 'Error al registrar', 'error'); }
+        } catch { mostrarMensaje('msg-resultado', 'No se pudo conectar con el servidor', 'error'); }
     };
 
-    // ── Buscar resultados por paciente ────────────────────────────────────────
     const buscarResultados = async () => {
         const documento = document.getElementById('doc-buscar-ver-resultado').value.trim();
         if (!documento) { mostrarMensaje('msg-ver-resultado', 'Escribe un número de documento', 'error'); return; }
         try {
-            const resPac = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`);
+            const resPac = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`, { headers: NH });
             if (!resPac.ok) throw new Error('Paciente no encontrado');
             const paciente = await resPac.json();
-
-            const res  = await fetch(`${GATEWAY}/api/v1/resultados/paciente/${paciente.id_paciente}`);
+            const res  = await fetch(`${GATEWAY}/api/v1/resultados/paciente/${paciente.id_paciente}`, { headers: NH });
             const data = await res.json();
             const tbody = document.getElementById('tabla-resultados');
-
-            if (!res.ok || !data.length) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No se encontraron resultados</td></tr>';
-                return;
-            }
+            if (!res.ok || !data.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No se encontraron resultados</td></tr>'; return; }
             tbody.innerHTML = data.map(r => `<tr>
-                <td>${r.nombre_paciente}</td>
-                <td>${r.especialidad}</td>
-                <td>${r.descripcion}</td>
-                <td>${r.fecha_resultado}</td>
+                <td>${r.nombre_paciente}</td><td>${r.especialidad}</td>
+                <td>${r.descripcion}</td><td>${r.fecha_resultado}</td>
                 <td><span class="badge ${r.estado?.toLowerCase()}">${r.estado}</span></td>
             </tr>`).join('');
-        } catch {
-            mostrarMensaje('msg-ver-resultado', 'No se encontró el paciente o no tiene resultados', 'error');
-        }
+        } catch { mostrarMensaje('msg-ver-resultado', 'No se encontró el paciente o no tiene resultados', 'error'); }
     };
 
-    // ── Preview archivos ──────────────────────────────────────────────────────
     document.getElementById('archivos-resultado').addEventListener('change', function () {
         const lista = document.getElementById('lista-archivos');
         if (!this.files.length) { lista.textContent = ''; return; }
@@ -311,7 +249,6 @@
             .join('');
     });
 
-    // ── Precargar turno si viene desde la agenda ──────────────────────────────
     const turnoPreCargado = localStorage.getItem('mt_turno_resultado');
     if (turnoPreCargado) {
         document.getElementById('id-turno-resultado').value = turnoPreCargado;
