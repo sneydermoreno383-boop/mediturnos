@@ -3,132 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediTurnos</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; }
-        header { background: #1a73e8; color: white; padding: 20px; text-align: center; }
-        header h1 { font-size: 28px; }
-        header p { font-size: 14px; margin-top: 5px; opacity: 0.85; }
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        .card { background: white; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .card h2 { color: #1a73e8; margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
-        .form-group textarea { height: 80px; resize: vertical; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        button { background: #1a73e8; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; margin-top: 5px; }
-        button:hover { background: #1557b0; }
-        button.secundario { background: #34a853; }
-        button.secundario:hover { background: #2d8f47; }
-        .mensaje { padding: 12px; border-radius: 5px; margin-top: 15px; font-size: 14px; display: none; }
-        .mensaje.exito { background: #e6f4ea; color: #2d8f47; border: 1px solid #34a853; }
-        .mensaje.error { background: #fce8e6; color: #c5221f; border: 1px solid #ea4335; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
-        table th { background: #1a73e8; color: white; padding: 10px; text-align: left; }
-        table td { padding: 10px; border-bottom: 1px solid #eee; }
-        table tr:hover { background: #f8f9fa; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .badge.pendiente { background: #fff3cd; color: #856404; }
-        .badge.confirmado { background: #d1e7dd; color: #0f5132; }
-        .badge.cancelado { background: #f8d7da; color: #842029; }
-        .badge.disponible { background: #d1e7dd; color: #0f5132; }
-        .badge.enviado { background: #cfe2ff; color: #084298; }
-        .badge.fallido { background: #f8d7da; color: #842029; }
-        .status-bar { display: flex; gap: 10px; margin-bottom: 25px; }
-        .status-item { flex: 1; background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .status-item .dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 8px; }
-        .status-item .dot.activo { background: #34a853; }
-        .status-item span { font-size: 13px; font-weight: bold; }
-        .seccion-titulo { font-size: 22px; font-weight: bold; color: #1a73e8; margin: 30px 0 10px; border-left: 4px solid #1a73e8; padding-left: 10px; }
-        .agenda-acceso { background: linear-gradient(135deg, #1a73e8, #0d47a1); border-radius: 8px; padding: 28px 25px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(26,115,232,0.3); gap: 20px; }
-        .agenda-acceso-info { color: white; }
-        .agenda-acceso-info h3 { font-size: 20px; margin-bottom: 6px; }
-        .agenda-acceso-info p { font-size: 13px; opacity: 0.85; line-height: 1.5; }
-        .agenda-acceso-btn { background: white; color: #1a73e8; border: none; padding: 12px 28px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap; width: auto; margin-top: 0; flex-shrink: 0; text-decoration: none; display: inline-block; }
-        .agenda-acceso-btn:hover { background: #e8f0fe; }
-    </style>
+    <title>MediTurnos — Sistema</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <script src="auth.js"></script>
+    <style>
+        :root {
+            --azul: #1a73e8;
+            --azul-oscuro: #0d47a1;
+            --verde: #16a34a;
+            --rojo: #dc2626;
+            --naranja: #ea580c;
+            --purpura: #7c3aed;
+            --rosa: #be185d;
+            --fondo: #f8fafc;
+            --texto: #0f172a;
+            --texto-suave: #64748b;
+            --borde: #e2e8f0;
+            --card: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--fondo); color: var(--texto); min-height: 100vh; }
+ 
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul) 60%, #1565c0 100%);
+            position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; width: 320px; height: 320px; border-radius: 50%;
+            background: rgba(255,255,255,0.04); top: -120px; right: -80px; pointer-events: none;
+        }
+        .header::after {
+            content: ''; position: absolute; width: 180px; height: 180px; border-radius: 50%;
+            background: rgba(255,255,255,0.06); bottom: -60px; left: 200px; pointer-events: none;
+        }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+        .header-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .logo { font-family: 'Playfair Display', serif; font-size: 22px; color: white; text-decoration: none; }
+        .logo span { color: #90caf9; }
+        .header-nav { display: flex; gap: 4px; }
+        .nav-link { color: rgba(255,255,255,0.7); font-size: 13px; padding: 7px 14px; border-radius: 20px; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; }
+        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.2); }
+        .header-user { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.35); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600; }
+        .user-info { text-align: right; }
+        .user-name { color: white; font-size: 13px; font-weight: 500; display: block; }
+        .user-rol { color: rgba(255,255,255,0.6); font-size: 11px; }
+        .btn-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.75); font-size: 12px; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+        .btn-logout:hover { background: rgba(255,255,255,0.2); color: white; }
+        .header-bottom { padding: 18px 0; display: flex; align-items: center; justify-content: space-between; }
+        .page-title { color: white; font-size: 18px; font-weight: 500; }
+        .page-subtitle { color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 2px; }
+ 
+        /* ── Status bar ── */
+        .status-bar { display: flex; gap: 8px; }
+        .svc-pill { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); border-radius: 20px; padding: 5px 12px; }
+        .svc-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; transition: background 0.3s; }
+        .svc-dot.activo { background: #4ade80; box-shadow: 0 0 0 2px rgba(74,222,128,0.25); }
+        .svc-label { color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 500; }
+ 
+        /* ── Main ── */
+        .main { max-width: 1200px; margin: 0 auto; padding: 28px; }
+ 
+        /* ── Modules grid ── */
+        .section-header { margin-bottom: 16px; }
+        .section-title { font-size: 13px; font-weight: 600; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.6px; padding-left: 10px; border-left: 3px solid var(--azul); }
+        .modules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+        .module-card { background: var(--card); border: 1px solid var(--borde); border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 16px; text-decoration: none; color: inherit; transition: all 0.2s; position: relative; overflow: hidden; }
+        .module-card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.2s; }
+        .module-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); border-color: transparent; }
+        .module-card.verde:hover::before { background: linear-gradient(135deg, #f0fdf4, #dcfce7); opacity: 1; }
+        .module-card.azul:hover::before  { background: linear-gradient(135deg, #eff6ff, #dbeafe); opacity: 1; }
+        .module-card.naranja:hover::before { background: linear-gradient(135deg, #fff7ed, #ffedd5); opacity: 1; }
+        .module-card.purpura:hover::before { background: linear-gradient(135deg, #faf5ff, #ede9fe); opacity: 1; }
+        .module-card.rosa:hover::before { background: linear-gradient(135deg, #fdf2f8, #fce7f3); opacity: 1; }
+        .module-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; position: relative; z-index: 1; }
+        .module-icon.verde   { background: #dcfce7; }
+        .module-icon.azul    { background: #dbeafe; }
+        .module-icon.naranja { background: #ffedd5; }
+        .module-icon.purpura { background: #ede9fe; }
+        .module-icon.rosa    { background: #fce7f3; }
+        .module-text { position: relative; z-index: 1; flex: 1; }
+        .module-name { font-size: 14px; font-weight: 600; color: var(--texto); margin-bottom: 3px; }
+        .module-desc { font-size: 12px; color: var(--texto-suave); line-height: 1.4; }
+        .module-arrow { position: relative; z-index: 1; color: var(--texto-suave); font-size: 18px; opacity: 0; transition: opacity 0.2s; }
+        .module-card:hover .module-arrow { opacity: 1; }
+ 
+        /* ── Notificaciones ── */
+        .notif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .card { background: var(--card); border: 1px solid var(--borde); border-radius: 14px; padding: 22px; }
+        .card-title { font-size: 15px; font-weight: 600; color: var(--texto); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--borde); display: flex; align-items: center; gap: 8px; }
+        .card-title-icon { font-size: 16px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--texto-suave); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 13px; border: 1.5px solid var(--borde); border-radius: 8px;
+            font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--texto);
+            background: var(--fondo); transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--azul); background: white;
+        }
+        .form-group textarea { height: 80px; resize: vertical; }
+        .input-row { display: flex; gap: 8px; }
+        .input-row input { flex: 1; }
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--azul); color: white; width: 100%; margin-top: 4px; }
+        .btn-primary:hover { background: var(--azul-oscuro); }
+        .btn-secondary { background: var(--fondo); color: var(--texto); border: 1.5px solid var(--borde); white-space: nowrap; }
+        .btn-secondary:hover { border-color: var(--azul); color: var(--azul); }
+        .msg { padding: 10px 13px; border-radius: 8px; margin-top: 12px; font-size: 13px; display: none; }
+        .msg.exito { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+        .msg.error { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+        table th { background: var(--fondo); color: var(--texto-suave); padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid var(--borde); }
+        table td { padding: 10px 12px; border-bottom: 1px solid var(--borde); color: var(--texto); }
+        table tr:last-child td { border-bottom: none; }
+        table tr:hover td { background: var(--fondo); }
+        .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge.enviado  { background: #dbeafe; color: #1d4ed8; }
+        .badge.fallido  { background: #fee2e2; color: #dc2626; }
+        .badge.pendiente { background: #fef9c3; color: #a16207; }
+        .resultado-busqueda { display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 13px; margin-bottom: 12px; font-size: 13px; color: #1d4ed8; }
+ 
+        @media (max-width: 900px) {
+            .modules-grid { grid-template-columns: 1fr 1fr; }
+            .header-nav { display: none; }
+            .notif-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .modules-grid { grid-template-columns: 1fr; }
+            .status-bar { flex-wrap: wrap; }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>MediTurnos</h1>
-        <p>Sistema de gestión de turnos médicos — Arquitectura de Microservicios</p>
-    </header>
  
-    <div class="container">
-        <div class="status-bar">
-            <div class="status-item"><span><span class="dot" id="dot-gateway"></span>API Gateway</span></div>
-            <div class="status-item"><span><span class="dot" id="dot-pacientes"></span>Pacientes</span></div>
-            <div class="status-item"><span><span class="dot" id="dot-agenda"></span>Agenda</span></div>
-            <div class="status-item"><span><span class="dot" id="dot-resultados"></span>Resultados</span></div>
-            <div class="status-item"><span><span class="dot" id="dot-notificaciones"></span>Notificaciones</span></div>
-            <div class="status-item"><span><span class="dot" id="dot-facturas"></span>Facturación</span></div>
-        </div>
- 
-        <div class="seccion-titulo">Pacientes</div>
-        <div class="agenda-acceso" style="background: linear-gradient(135deg, #34a853, #1e7e34);">
-            <div class="agenda-acceso-info">
-                <h3>Gestión de Pacientes</h3>
-                <p>Registrá pacientes, gestioná sus coberturas médicas (EPS), verificá vigencias, actualizá saldos y consultá el historial de autorizaciones.</p>
+<div class="header">
+    <div class="header-inner">
+        <div class="header-top">
+            <a class="logo" href="index.html">Medi<span>Turnos</span></a>
+            <nav class="header-nav">
+                <a class="nav-link active" href="index.html">Inicio</a>
+                <a class="nav-link" href="pacientes.html">Pacientes</a>
+                <a class="nav-link" href="agenda.html">Agenda</a>
+                <a class="nav-link" href="resultados.html">Resultados</a>
+                <a class="nav-link" href="usuarios.html">Usuarios</a>
+                <a class="nav-link" href="facturas.html">Facturación</a>
+            </nav>
+            <div class="header-user">
+                <div class="user-info">
+                    <span class="user-name" id="header-nombre">—</span>
+                    <span class="user-rol" id="header-rol">—</span>
+                </div>
+                <div class="avatar" id="header-avatar">—</div>
+                <button class="btn-logout" onclick="Auth.cerrarSesion()">Salir</button>
             </div>
-            <a class="agenda-acceso-btn" href="pacientes.html">Ir a Pacientes →</a>
         </div>
- 
-        <div class="seccion-titulo">Agenda</div>
-        <div class="agenda-acceso">
-            <div class="agenda-acceso-info">
-                <h3>Sistema de Agenda</h3>
-                <p>Consultá disponibilidad de médicos en tiempo real, agendá turnos con reglas de negocio automáticas y evitá dobles reservas.</p>
+        <div class="header-bottom">
+            <div>
+                <div class="page-title">Panel Principal</div>
+                <div class="page-subtitle">Sistema de gestión de turnos médicos</div>
             </div>
-            <a class="agenda-acceso-btn" href="agenda.html">Ir a Agenda →</a>
-        </div>
- 
-        <div class="seccion-titulo">Resultados</div>
-        <div class="agenda-acceso" style="background: linear-gradient(135deg, #f57c00, #e65100);">
-            <div class="agenda-acceso-info">
-                <h3>Resultados Clínicos</h3>
-                <p>Registrá resultados de estudios, adjuntá archivos PDF, imágenes y videos.</p>
+            <div class="status-bar">
+                <div class="svc-pill"><div class="svc-dot" id="dot-gateway"></div><span class="svc-label">Gateway</span></div>
+                <div class="svc-pill"><div class="svc-dot" id="dot-pacientes"></div><span class="svc-label">Pacientes</span></div>
+                <div class="svc-pill"><div class="svc-dot" id="dot-agenda"></div><span class="svc-label">Agenda</span></div>
+                <div class="svc-pill"><div class="svc-dot" id="dot-resultados"></div><span class="svc-label">Resultados</span></div>
+                <div class="svc-pill"><div class="svc-dot" id="dot-notificaciones"></div><span class="svc-label">Notificaciones</span></div>
+                <div class="svc-pill"><div class="svc-dot" id="dot-facturas"></div><span class="svc-label">Facturación</span></div>
             </div>
-            <a class="agenda-acceso-btn" href="resultados.html">Ir a Resultados →</a>
         </div>
+    </div>
+</div>
  
-        <div class="seccion-titulo">Usuarios</div>
-        <div class="agenda-acceso" style="background: linear-gradient(135deg, #6f42c1, #4a148c);">
-            <div class="agenda-acceso-info">
-                <h3>Gestión de Usuarios</h3>
-                <p>Creá cuentas para médicos, activá o desactivá usuarios y consultá todos los accesos al sistema.</p>
+<div class="main">
+    <div class="section-header" style="margin-bottom:16px;">
+        <div class="section-title">Módulos del sistema</div>
+    </div>
+    <div class="modules-grid">
+        <a class="module-card verde" href="pacientes.html">
+            <div class="module-icon verde">🧑‍⚕️</div>
+            <div class="module-text">
+                <div class="module-name">Gestión de Pacientes</div>
+                <div class="module-desc">Registro, coberturas EPS y autorizaciones</div>
             </div>
-            <a class="agenda-acceso-btn" href="usuarios.html">Ir a Usuarios →</a>
-        </div>
- 
-        <div class="seccion-titulo">Facturación</div>
-        <div class="agenda-acceso" style="background: linear-gradient(135deg, #c2185b, #880e4f);">
-            <div class="agenda-acceso-info">
-                <h3>Facturación</h3>
-                <p>Generá facturas por turnos, descargá PDF y consultá el historial de facturación por paciente.</p>
+            <div class="module-arrow">›</div>
+        </a>
+        <a class="module-card azul" href="agenda.html">
+            <div class="module-icon azul">📅</div>
+            <div class="module-text">
+                <div class="module-name">Agenda de Turnos</div>
+                <div class="module-desc">Disponibilidad en tiempo real y reservas</div>
             </div>
-            <a class="agenda-acceso-btn" href="facturas.html">Ir a Facturación →</a>
-        </div>
+            <div class="module-arrow">›</div>
+        </a>
+        <a class="module-card naranja" href="resultados.html">
+            <div class="module-icon naranja">🔬</div>
+            <div class="module-text">
+                <div class="module-name">Resultados Clínicos</div>
+                <div class="module-desc">Archivos, imágenes y diagnósticos</div>
+            </div>
+            <div class="module-arrow">›</div>
+        </a>
+        <a class="module-card purpura" href="usuarios.html">
+            <div class="module-icon purpura">👤</div>
+            <div class="module-text">
+                <div class="module-name">Gestión de Usuarios</div>
+                <div class="module-desc">Cuentas, roles y permisos del sistema</div>
+            </div>
+            <div class="module-arrow">›</div>
+        </a>
+        <a class="module-card rosa" href="facturas.html" style="grid-column: span 2;">
+            <div class="module-icon rosa">🧾</div>
+            <div class="module-text">
+                <div class="module-name">Facturación</div>
+                <div class="module-desc">Facturas, descarga PDF e historial por paciente</div>
+            </div>
+            <div class="module-arrow">›</div>
+        </a>
+    </div>
  
-        <div class="seccion-titulo">Notificaciones</div>
- 
+    <div class="section-header" style="margin-bottom:16px;">
+        <div class="section-title">Notificaciones</div>
+    </div>
+    <div class="notif-grid">
         <div class="card">
-            <h2>Registrar Notificación</h2>
+            <div class="card-title"><span class="card-title-icon">🔔</span> Registrar Notificación</div>
             <div class="form-group">
-                <label>Número de documento del paciente</label>
-                <div style="display:flex;gap:10px;">
-                    <input type="text" id="doc-buscar-notif" placeholder="Escribe el documento">
-                    <button onclick="buscarPacienteNotif()" style="width:auto;padding:10px 20px;">Buscar</button>
+                <label>Documento del paciente</label>
+                <div class="input-row">
+                    <input type="text" id="doc-buscar-notif" placeholder="Número de documento">
+                    <button class="btn btn-secondary" onclick="buscarPacienteNotif()">Buscar</button>
                 </div>
             </div>
-            <div id="resultado-busqueda-notif" style="display:none;background:#e8f0fe;border-radius:5px;padding:12px;margin-bottom:15px;">
-                <span style="font-size:14px;">Paciente: <strong id="nombre-paciente-notif"></strong></span>
+            <div class="resultado-busqueda" id="resultado-busqueda-notif">
+                ✓ <strong id="nombre-paciente-notif"></strong>
                 <input type="hidden" id="id-paciente-notif">
             </div>
             <div class="form-group">
-                <label>Tipo de notificación</label>
+                <label>Tipo</label>
                 <select id="tipo-notif">
                     <option value="">Selecciona un tipo</option>
                     <option value="Turno_confirmado">Turno confirmado</option>
@@ -138,126 +252,131 @@
             </div>
             <div class="form-group">
                 <label>Mensaje</label>
-                <textarea id="mensaje-notif" placeholder="Escribe el mensaje de la notificación..."></textarea>
+                <textarea id="mensaje-notif" placeholder="Escribe el mensaje..."></textarea>
             </div>
-            <button onclick="crearNotificacion()">Registrar Notificación</button>
-            <div class="mensaje" id="msg-notif"></div>
+            <button class="btn btn-primary" onclick="crearNotificacion()">Registrar Notificación</button>
+            <div class="msg" id="msg-notif"></div>
         </div>
  
         <div class="card">
-            <h2>Ver Notificaciones por Paciente</h2>
+            <div class="card-title"><span class="card-title-icon">📋</span> Ver Notificaciones</div>
             <div class="form-group">
-                <label>Número de documento del paciente</label>
-                <div style="display:flex;gap:10px;">
-                    <input type="text" id="doc-buscar-ver-notif" placeholder="Escribe el documento">
-                    <button onclick="buscarNotificaciones()" style="width:auto;padding:10px 20px;">Buscar</button>
+                <label>Documento del paciente</label>
+                <div class="input-row">
+                    <input type="text" id="doc-buscar-ver-notif" placeholder="Número de documento">
+                    <button class="btn btn-secondary" onclick="buscarNotificaciones()">Buscar</button>
                 </div>
             </div>
-            <div class="mensaje" id="msg-ver-notif"></div>
+            <div class="msg" id="msg-ver-notif"></div>
             <table>
                 <thead>
-                    <tr><th>Paciente</th><th>Tipo</th><th>Mensaje</th><th>Estado</th><th>Fecha</th></tr>
+                    <tr><th>Tipo</th><th>Mensaje</th><th>Estado</th><th>Fecha</th></tr>
                 </thead>
                 <tbody id="tabla-notificaciones">
-                    <tr><td colspan="5" style="text-align:center;color:#999;">Busca un paciente para ver sus notificaciones</td></tr>
+                    <tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:20px;">Busca un paciente</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
+</div>
  
-    <script>
-        const usuarioActual = Auth.verificar(['admin']);
-        Auth.inyectarHeader('Principal');
-        Auth.aplicarPermisos(usuarioActual);
+<script>
+    const usuarioActual = Auth.verificar(['admin']);
+    Auth.aplicarPermisos(usuarioActual);
  
-        const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
-        const NH = { 'ngrok-skip-browser-warning': 'true' };
+    document.getElementById('header-nombre').textContent = `${usuarioActual.nombre} ${usuarioActual.apellido}`;
+    document.getElementById('header-rol').textContent = usuarioActual.rol.charAt(0).toUpperCase() + usuarioActual.rol.slice(1);
+    document.getElementById('header-avatar').textContent = (usuarioActual.nombre[0] + usuarioActual.apellido[0]).toUpperCase();
  
-        const verificarServicios = async () => {
-            const verificar = async (url, dotId) => {
-                try {
-                    const res = await fetch(url, { headers: NH });
-                    const el = document.getElementById(dotId);
-                    if (res.ok && el) el.classList.add('activo');
-                } catch {}
-            };
-            await Promise.all([
-                verificar(`${GATEWAY}/health`,                             'dot-gateway'),
-                verificar(`${GATEWAY}/api/v1/pacientes/health/live`,       'dot-pacientes'),
-                verificar(`${GATEWAY}/api/v1/turnos/health/live`,          'dot-agenda'),
-                verificar(`${GATEWAY}/api/v1/resultados/health/live`,      'dot-resultados'),
-                verificar(`${GATEWAY}/api/v1/notificaciones/health/live`,  'dot-notificaciones'),
-                verificar(`${GATEWAY}/api/v1/facturas/health/live`,        'dot-facturas'),
-            ]);
-        };
+    const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
+    const NH = { 'ngrok-skip-browser-warning': 'true' };
  
-        const mostrarMensaje = (id, texto, tipo) => {
-            const el = document.getElementById(id);
-            el.textContent = texto; el.className = `mensaje ${tipo}`; el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
-        };
- 
-        const buscarPacientePorDocumento = async (documento) => {
-            const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`, { headers: NH });
-            if (!res.ok) throw new Error('Paciente no encontrado');
-            return await res.json();
-        };
- 
-        const buscarPacienteNotif = async () => {
-            const documento = document.getElementById('doc-buscar-notif').value.trim();
-            if (!documento) { mostrarMensaje('msg-notif', 'Escribe un número de documento', 'error'); return; }
+    const verificarServicios = async () => {
+        const checks = [
+            { url: `${GATEWAY}/health`,                            dot: 'dot-gateway' },
+            { url: `${GATEWAY}/api/v1/pacientes/health/live`,      dot: 'dot-pacientes' },
+            { url: `${GATEWAY}/api/v1/turnos/health/live`,         dot: 'dot-agenda' },
+            { url: `${GATEWAY}/api/v1/resultados/health/live`,     dot: 'dot-resultados' },
+            { url: `${GATEWAY}/api/v1/notificaciones/health/live`, dot: 'dot-notificaciones' },
+            { url: `${GATEWAY}/api/v1/facturas/health/live`,       dot: 'dot-facturas' },
+        ];
+        await Promise.all(checks.map(async ({ url, dot }) => {
             try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                document.getElementById('nombre-paciente-notif').textContent = `${paciente.nombre} ${paciente.apellido}`;
-                document.getElementById('id-paciente-notif').value = paciente.id_paciente;
-                document.getElementById('resultado-busqueda-notif').style.display = 'block';
-            } catch {
-                document.getElementById('resultado-busqueda-notif').style.display = 'none';
-                mostrarMensaje('msg-notif', 'No se encontró ningún paciente con ese documento', 'error');
+                const res = await fetch(url, { headers: NH });
+                if (res.ok) document.getElementById(dot).classList.add('activo');
+            } catch {}
+        }));
+    };
+ 
+    const mostrarMensaje = (id, texto, tipo) => {
+        const el = document.getElementById(id);
+        el.textContent = texto; el.className = `msg ${tipo}`; el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 4000);
+    };
+ 
+    const buscarPacientePorDocumento = async (doc) => {
+        const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${doc}`, { headers: NH });
+        if (!res.ok) throw new Error();
+        return await res.json();
+    };
+ 
+    const buscarPacienteNotif = async () => {
+        const doc = document.getElementById('doc-buscar-notif').value.trim();
+        if (!doc) { mostrarMensaje('msg-notif', 'Escribe un documento', 'error'); return; }
+        try {
+            const p = await buscarPacientePorDocumento(doc);
+            document.getElementById('nombre-paciente-notif').textContent = `${p.nombre} ${p.apellido}`;
+            document.getElementById('id-paciente-notif').value = p.id_paciente;
+            document.getElementById('resultado-busqueda-notif').style.display = 'block';
+        } catch {
+            document.getElementById('resultado-busqueda-notif').style.display = 'none';
+            mostrarMensaje('msg-notif', 'Paciente no encontrado', 'error');
+        }
+    };
+ 
+    const crearNotificacion = async () => {
+        const id_paciente     = document.getElementById('id-paciente-notif').value;
+        const nombre_paciente = document.getElementById('nombre-paciente-notif').textContent;
+        const tipo            = document.getElementById('tipo-notif').value;
+        const mensaje         = document.getElementById('mensaje-notif').value;
+        if (!id_paciente || !tipo || !mensaje) { mostrarMensaje('msg-notif', 'Completa todos los campos', 'error'); return; }
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/notificaciones`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...NH },
+                body: JSON.stringify({ id_paciente, nombre_paciente, tipo, mensaje })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                mostrarMensaje('msg-notif', 'Notificación registrada', 'exito');
+                document.getElementById('mensaje-notif').value = '';
+                document.getElementById('tipo-notif').value = '';
+            } else mostrarMensaje('msg-notif', data.mensaje || 'Error', 'error');
+        } catch { mostrarMensaje('msg-notif', 'No se pudo conectar', 'error'); }
+    };
+ 
+    const buscarNotificaciones = async () => {
+        const doc = document.getElementById('doc-buscar-ver-notif').value.trim();
+        if (!doc) { mostrarMensaje('msg-ver-notif', 'Escribe un documento', 'error'); return; }
+        try {
+            const p = await buscarPacientePorDocumento(doc);
+            const res = await fetch(`${GATEWAY}/api/v1/notificaciones/paciente/${p.id_paciente}`, { headers: NH });
+            const data = await res.json();
+            const tbody = document.getElementById('tabla-notificaciones');
+            if (!res.ok || !data.length) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px;">Sin notificaciones</td></tr>';
+                return;
             }
-        };
+            tbody.innerHTML = data.map(n => `<tr>
+                <td style="font-size:12px;">${n.tipo.replace(/_/g,' ')}</td>
+                <td>${n.mensaje}</td>
+                <td><span class="badge ${n.estado.toLowerCase()}">${n.estado}</span></td>
+                <td style="font-size:12px;color:#64748b;">${new Date(n.fecha_envio).toLocaleDateString('es-CO')}</td>
+            </tr>`).join('');
+        } catch { mostrarMensaje('msg-ver-notif', 'Paciente no encontrado', 'error'); }
+    };
  
-        const crearNotificacion = async () => {
-            const id_paciente    = document.getElementById('id-paciente-notif').value;
-            const nombre_paciente= document.getElementById('nombre-paciente-notif').textContent;
-            const tipo           = document.getElementById('tipo-notif').value;
-            const mensaje        = document.getElementById('mensaje-notif').value;
-            if (!id_paciente || !tipo || !mensaje) { mostrarMensaje('msg-notif', 'Por favor completa todos los campos', 'error'); return; }
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/notificaciones`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...NH },
-                    body: JSON.stringify({ id_paciente, nombre_paciente, tipo, mensaje })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    mostrarMensaje('msg-notif', 'Notificación registrada exitosamente', 'exito');
-                    document.getElementById('mensaje-notif').value = '';
-                    document.getElementById('tipo-notif').value = '';
-                } else mostrarMensaje('msg-notif', data.mensaje || 'Error al registrar', 'error');
-            } catch { mostrarMensaje('msg-notif', 'No se pudo conectar con el servidor', 'error'); }
-        };
- 
-        const buscarNotificaciones = async () => {
-            const documento = document.getElementById('doc-buscar-ver-notif').value.trim();
-            if (!documento) { mostrarMensaje('msg-ver-notif', 'Escribe un número de documento', 'error'); return; }
-            try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                const res = await fetch(`${GATEWAY}/api/v1/notificaciones/paciente/${paciente.id_paciente}`, { headers: NH });
-                const data = await res.json();
-                const tbody = document.getElementById('tabla-notificaciones');
-                if (!res.ok) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No se encontraron notificaciones</td></tr>'; return; }
-                tbody.innerHTML = data.map(n => `<tr>
-                    <td>${n.nombre_paciente}</td>
-                    <td>${n.tipo.replace('_', ' ')}</td>
-                    <td>${n.mensaje}</td>
-                    <td><span class="badge ${n.estado.toLowerCase()}">${n.estado}</span></td>
-                    <td>${new Date(n.fecha_envio).toLocaleDateString()}</td>
-                </tr>`).join('');
-            } catch { mostrarMensaje('msg-ver-notif', 'No se encontró el paciente o no tiene notificaciones', 'error'); }
-        };
- 
-        verificarServicios();
-    </script>
+    verificarServicios();
+</script>
 </body>
 </html>

@@ -2,24 +2,137 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediTurnos — Sin acceso</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --azul: #1a73e8;
+            --azul-oscuro: #0d47a1;
+            --rojo: #dc2626;
+            --fondo: #f8fafc;
+            --texto: #0f172a;
+            --texto-suave: #64748b;
+            --borde: #e2e8f0;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f0f4f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .box { background: white; border-radius: 12px; padding: 50px 40px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 420px; }
-        .icono { font-size: 60px; margin-bottom: 20px; }
-        h1 { font-size: 22px; color: #1a1a2e; margin-bottom: 10px; }
-        p { color: #6b7280; font-size: 14px; margin-bottom: 25px; line-height: 1.6; }
-        a { display: inline-block; background: #1a73e8; color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; }
-        a:hover { background: #0d47a1; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--fondo);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+ 
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--azul);
+            text-decoration: none;
+            margin-bottom: 40px;
+            opacity: 0.7;
+        }
+        .logo span { color: var(--azul-oscuro); }
+ 
+        .card {
+            background: white;
+            border: 1px solid var(--borde);
+            border-radius: 20px;
+            padding: 52px 48px;
+            text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.07);
+            max-width: 460px;
+            width: 100%;
+            animation: fadeUp .4s ease both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+ 
+        .icono-wrap {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 34px;
+            margin: 0 auto 24px;
+        }
+ 
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            color: var(--texto);
+            margin-bottom: 12px;
+        }
+ 
+        p {
+            color: var(--texto-suave);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+ 
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+ 
+        .btn {
+            display: block;
+            padding: 13px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--azul);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--azul-oscuro);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(26,115,232,0.3);
+        }
+        .btn-secondary {
+            background: var(--fondo);
+            color: var(--texto-suave);
+            border: 1.5px solid var(--borde);
+        }
+        .btn-secondary:hover {
+            border-color: var(--azul);
+            color: var(--azul);
+        }
+ 
+        .divider {
+            width: 40px; height: 3px;
+            background: linear-gradient(90deg, var(--azul), #90caf9);
+            border-radius: 2px;
+            margin: 0 auto 24px;
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <div class="icono">🔒</div>
+ 
+    <a class="logo" href="login.html">Medi<span>Turnos</span></a>
+ 
+    <div class="card">
+        <div class="icono-wrap">🔒</div>
         <h1>Acceso denegado</h1>
-        <p>No tienes permisos para acceder a esta sección del sistema. Si crees que esto es un error, contacta al administrador.</p>
-        <a href="login.html">Volver al inicio</a>
+        <div class="divider"></div>
+        <p>No tenés permisos para acceder a esta sección del sistema.<br>
+        Si creés que esto es un error, contactá al administrador.</p>
+        <div class="btn-group">
+            <a class="btn btn-primary" href="login.html">Volver al inicio de sesión</a>
+            <a class="btn btn-secondary" href="javascript:history.back()">← Página anterior</a>
+        </div>
     </div>
+ 
 </body>
 </html>

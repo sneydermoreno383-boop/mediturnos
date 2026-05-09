@@ -4,448 +4,417 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediTurnos — Pacientes</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; }
-        header { background: #1a73e8; color: white; padding: 20px; text-align: center; }
-        header h1 { font-size: 28px; }
-        header p { font-size: 14px; margin-top: 5px; opacity: 0.85; }
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        .card { background: white; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .card h2 { color: #1a73e8; margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
-        .form-group textarea { height: 80px; resize: vertical; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        button { background: #1a73e8; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; margin-top: 5px; }
-        button:hover { background: #1557b0; }
-        button.secundario { background: #34a853; }
-        button.secundario:hover { background: #2d8f47; }
-        button.danger { background: #ea4335; }
-        button.danger:hover { background: #c5221f; }
-        .mensaje { padding: 12px; border-radius: 5px; margin-top: 15px; font-size: 14px; display: none; }
-        .mensaje.exito { background: #e6f4ea; color: #2d8f47; border: 1px solid #34a853; }
-        .mensaje.error { background: #fce8e6; color: #c5221f; border: 1px solid #ea4335; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
-        table th { background: #1a73e8; color: white; padding: 10px; text-align: left; }
-        table td { padding: 10px; border-bottom: 1px solid #eee; }
-        table tr:hover { background: #f8f9fa; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .badge.vigente { background: #d1e7dd; color: #0f5132; }
-        .badge.vencida { background: #f8d7da; color: #842029; }
-        .badge.pendiente { background: #fff3cd; color: #856404; }
-        .badge.aprobada { background: #d1e7dd; color: #0f5132; }
-        .badge.rechazada { background: #f8d7da; color: #842029; }
-        .status-bar { display: flex; gap: 10px; margin-bottom: 25px; }
-        .status-item { flex: 1; background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .status-item .dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 8px; }
-        .status-item .dot.activo { background: #34a853; }
-        .status-item span { font-size: 13px; font-weight: bold; }
-        .seccion-titulo { font-size: 22px; font-weight: bold; color: #1a73e8; margin: 30px 0 10px; border-left: 4px solid #1a73e8; padding-left: 10px; }
-        .nav-back { display: inline-block; margin-bottom: 20px; color: #1a73e8; font-size: 14px; text-decoration: none; }
-        .nav-back:hover { text-decoration: underline; }
-        .paciente-seleccionado { display: none; background: #e8f0fe; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 14px; color: #1a73e8; border-left: 4px solid #1a73e8; }
-        .paciente-seleccionado.visible { display: block; }
-    </style>
+    <link rel="stylesheet" href="style.css">
     <script src="auth.js"></script>
 </head>
 <body>
-    <header>
-        <h1>MediTurnos — Pacientes</h1>
-        <p>Gestión de pacientes · Coberturas médicas · Autorizaciones</p>
-    </header>
- 
-    <div class="container">
-        <a class="nav-back" href="index.html">← Volver al sistema principal</a>
- 
-        <div class="status-bar">
-            <div class="status-item"><span><span class="dot" id="dot-gateway"></span>API Gateway</span></div>
-            <div class="status-item"><span><span class="dot" id="dot-pacientes"></span>Pacientes</span></div>
-        </div>
- 
-        <div class="seccion-titulo">Registro de Pacientes</div>
-        <div class="card">
-            <h2>Registrar Paciente</h2>
-            <div class="form-row">
-                <div class="form-group"><label>Nombre</label><input type="text" id="nombre" placeholder="Nombre"></div>
-                <div class="form-group"><label>Apellido</label><input type="text" id="apellido" placeholder="Apellido"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Documento</label><input type="text" id="documento" placeholder="Número de documento"></div>
-                <div class="form-group"><label>Fecha de nacimiento</label><input type="date" id="fecha_nacimiento"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Teléfono</label><input type="text" id="telefono" placeholder="Teléfono"></div>
-                <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="correo@email.com"></div>
-            </div>
-            <button onclick="crearPaciente()">Registrar Paciente</button>
-            <div class="mensaje" id="msg-paciente"></div>
-        </div>
- 
-        <div class="card">
-            <h2>Pacientes Registrados</h2>
-            <button class="secundario" onclick="cargarPacientes()">Actualizar lista</button>
-            <table>
-                <thead><tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Teléfono</th><th>Fecha nacimiento</th><th>ID</th></tr></thead>
-                <tbody id="tabla-pacientes">
-                    <tr><td colspan="6" style="text-align:center;color:#999;">Haz clic en Actualizar lista</td></tr>
-                </tbody>
-            </table>
-        </div>
- 
-        <div class="seccion-titulo">Coberturas Médicas (EPS)</div>
-        <div class="card">
-            <h2>Agregar Cobertura a Paciente</h2>
-            <div class="form-group">
-                <label>Número de documento del paciente</label>
-                <div style="display:flex;gap:10px;">
-                    <input type="text" id="doc-cobertura" placeholder="Escribe el documento">
-                    <button onclick="buscarPacienteCobertura()" style="width:auto;padding:10px 20px;">Buscar</button>
+
+<div class="header">
+    <div class="header-inner">
+        <div class="header-top">
+            <a class="logo" href="index.html">Medi<span>Turnos</span></a>
+            <nav class="header-nav">
+                <a class="nav-link" href="index.html">Inicio</a>
+                <a class="nav-link active" href="pacientes.html">Pacientes</a>
+                <a class="nav-link" href="agenda.html">Agenda</a>
+                <a class="nav-link" href="resultados.html">Resultados</a>
+                <a class="nav-link" href="usuarios.html">Usuarios</a>
+                <a class="nav-link" href="facturas.html">Facturación</a>
+            </nav>
+            <div class="header-user">
+                <div class="user-info" style="text-align:right;">
+                    <span class="user-name-h" id="header-nombre">—</span>
                 </div>
+                <div class="avatar" id="header-avatar">—</div>
+                <button class="btn-logout" onclick="Auth.cerrarSesion()">Salir</button>
             </div>
-            <div class="paciente-seleccionado" id="paciente-cobertura-info"></div>
-            <input type="hidden" id="id-paciente-cobertura">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>EPS</label>
-                    <select id="eps-cobertura">
-                        <option value="">Selecciona una EPS</option>
-                        <option value="Sura EPS">Sura EPS</option>
-                        <option value="Sanitas EPS">Sanitas EPS</option>
-                        <option value="Nueva EPS">Nueva EPS</option>
-                        <option value="Compensar EPS">Compensar EPS</option>
-                        <option value="Famisanar EPS">Famisanar EPS</option>
-                        <option value="Coosalud EPS">Coosalud EPS</option>
-                        <option value="Medimas EPS">Medimas EPS</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Tipo de afiliación</label>
-                    <select id="tipo-afiliacion">
-                        <option value="">Selecciona el tipo</option>
-                        <option value="Contributivo">Contributivo</option>
-                        <option value="Subsidiado">Subsidiado</option>
-                        <option value="Especial">Especial</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Número de afiliado</label><input type="text" id="numero-afiliado" placeholder="Número de afiliado"></div>
-                <div class="form-group"><label>Fecha inicio</label><input type="date" id="fecha-inicio-cobertura"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Fecha fin (opcional)</label><input type="date" id="fecha-fin-cobertura"></div>
-                <div class="form-group"><label>Saldo disponible ($)</label><input type="number" id="saldo-cobertura" placeholder="0" min="0"></div>
-            </div>
-            <div class="form-group">
-                <label>Porcentaje de copago (%)</label>
-                <input type="number" id="copago-cobertura" placeholder="0" min="0" max="100">
-            </div>
-            <button onclick="agregarCobertura()">Agregar Cobertura</button>
-            <div class="mensaje" id="msg-cobertura"></div>
         </div>
- 
-        <div class="card">
-            <h2>Ver Coberturas de un Paciente</h2>
-            <div class="form-group">
-                <label>Número de documento del paciente</label>
-                <div style="display:flex;gap:10px;">
-                    <input type="text" id="doc-ver-cobertura" placeholder="Escribe el documento">
-                    <button onclick="verCoberturas()" style="width:auto;padding:10px 20px;">Buscar</button>
-                </div>
+        <div class="header-bottom">
+            <div class="page-title-wrap">
+                <div class="page-title">Gestión de Pacientes</div>
+                <div class="page-sub">Registro · Coberturas EPS · Autorizaciones</div>
             </div>
-            <div class="mensaje" id="msg-ver-cobertura"></div>
-            <table>
-                <thead><tr><th>EPS</th><th>Tipo</th><th>N° Afiliado</th><th>Inicio</th><th>Fin</th><th>Saldo</th><th>Copago</th><th>Vigencia</th><th>Acción</th></tr></thead>
-                <tbody id="tabla-coberturas">
-                    <tr><td colspan="9" style="text-align:center;color:#999;">Busca un paciente para ver sus coberturas</td></tr>
-                </tbody>
-            </table>
-        </div>
- 
-        <div class="card">
-            <h2>Actualizar Saldo de Cobertura</h2>
-            <div class="form-group"><label>ID de la cobertura</label><input type="text" id="id-cobertura-saldo" placeholder="Pega el ID de la cobertura"></div>
-            <div class="form-group"><label>Nuevo saldo disponible ($)</label><input type="number" id="nuevo-saldo" placeholder="0" min="0"></div>
-            <button onclick="actualizarSaldo()">Actualizar Saldo</button>
-            <div class="mensaje" id="msg-saldo"></div>
-        </div>
- 
-        <div class="seccion-titulo">Historial de Autorizaciones</div>
-        <div class="card">
-            <h2>Solicitar Autorización</h2>
-            <div class="form-group">
-                <label>Número de documento del paciente</label>
-                <div style="display:flex;gap:10px;">
-                    <input type="text" id="doc-autorizacion" placeholder="Escribe el documento">
-                    <button onclick="buscarPacienteAutorizacion()" style="width:auto;padding:10px 20px;">Buscar</button>
-                </div>
+            <div class="status-bar">
+                <div class="svc-pill"><div class="svc-dot" id="dot-gateway"></div><span class="svc-label">Gateway</span></div>
+                <div class="svc-pill"><div class="svc-dot" id="dot-pacientes"></div><span class="svc-label">Pacientes</span></div>
             </div>
-            <div class="paciente-seleccionado" id="paciente-autorizacion-info"></div>
-            <input type="hidden" id="id-paciente-autorizacion">
-            <div class="form-group">
-                <label>ID de la cobertura</label>
-                <select id="select-cobertura-autorizacion"><option value="">Primero busca un paciente</option></select>
-            </div>
-            <div class="form-group">
-                <label>Tipo de estudio</label>
-                <select id="tipo-estudio-autorizacion">
-                    <option value="">Selecciona un estudio</option>
-                    <option value="radiografia">Radiografía</option>
-                    <option value="ecografia">Ecografía</option>
-                    <option value="tomografia">Tomografía</option>
-                    <option value="resonancia">Resonancia</option>
-                    <option value="mamografia">Mamografía</option>
-                    <option value="densitometria">Densitometría</option>
-                    <option value="electrocardiograma">Electrocardiograma</option>
-                    <option value="laboratorio">Laboratorio</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Monto autorizado ($)</label><input type="number" id="monto-autorizacion" placeholder="0" min="0"></div>
-                <div class="form-group"><label>Fecha vencimiento</label><input type="date" id="fecha-vencimiento-autorizacion"></div>
-            </div>
-            <div class="form-group"><label>Observaciones</label><textarea id="observaciones-autorizacion" placeholder="Observaciones opcionales..."></textarea></div>
-            <button onclick="solicitarAutorizacion()">Solicitar Autorización</button>
-            <div class="mensaje" id="msg-autorizacion"></div>
-        </div>
- 
-        <div class="card">
-            <h2>Ver Historial de Autorizaciones</h2>
-            <div class="form-group">
-                <label>Número de documento del paciente</label>
-                <div style="display:flex;gap:10px;">
-                    <input type="text" id="doc-ver-autorizacion" placeholder="Escribe el documento">
-                    <button onclick="verAutorizaciones()" style="width:auto;padding:10px 20px;">Buscar</button>
-                </div>
-            </div>
-            <div class="mensaje" id="msg-ver-autorizacion"></div>
-            <table>
-                <thead><tr><th>Código</th><th>Estudio</th><th>EPS</th><th>Estado</th><th>Monto</th><th>Fecha solicitud</th><th>Vencimiento</th></tr></thead>
-                <tbody id="tabla-autorizaciones">
-                    <tr><td colspan="7" style="text-align:center;color:#999;">Busca un paciente para ver sus autorizaciones</td></tr>
-                </tbody>
-            </table>
         </div>
     </div>
- 
-    <script>
-        const usuarioActual = Auth.verificar(['admin']);
-        Auth.inyectarHeader('Pacientes');
-        Auth.aplicarPermisos(usuarioActual);
- 
-        const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
-        const NH = { 'ngrok-skip-browser-warning': 'true' };
- 
-        const verificarServicios = async () => {
-            try { await fetch(`${GATEWAY}/health`, { headers: NH }); document.getElementById('dot-gateway').classList.add('activo'); } catch {}
-            try { await fetch(`${GATEWAY}/api/v1/pacientes`, { headers: NH }); document.getElementById('dot-pacientes').classList.add('activo'); } catch {}
+</div>
+
+<div class="main">
+    <a class="back-link" href="index.html">← Volver al inicio</a>
+
+    <!-- REGISTRO -->
+    <div class="section-label">Registro de Pacientes</div>
+    <div class="card">
+        <div class="card-title">🧑‍⚕️ Registrar Paciente</div>
+        <div class="form-row">
+            <div class="form-group"><label>Nombre</label><input type="text" id="nombre" placeholder="Nombre"></div>
+            <div class="form-group"><label>Apellido</label><input type="text" id="apellido" placeholder="Apellido"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Documento</label><input type="text" id="documento" placeholder="Número de documento"></div>
+            <div class="form-group"><label>Fecha de nacimiento</label><input type="date" id="fecha_nacimiento"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Teléfono</label><input type="text" id="telefono" placeholder="Teléfono"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="correo@email.com"></div>
+        </div>
+        <button class="btn btn-primary" onclick="crearPaciente()">Registrar Paciente</button>
+        <div class="msg" id="msg-paciente"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">📋 Pacientes Registrados</div>
+        <button class="btn btn-verde btn-sm" onclick="cargarPacientes()" style="margin-bottom:12px;">Actualizar lista</button>
+        <table>
+            <thead><tr><th>Nombre</th><th>Documento</th><th>Email</th><th>Teléfono</th><th>Nacimiento</th><th>ID</th></tr></thead>
+            <tbody id="tabla-pacientes">
+                <tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:20px;">Haz clic en Actualizar lista</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- COBERTURAS -->
+    <div class="section-label">Coberturas Médicas (EPS)</div>
+    <div class="card">
+        <div class="card-title">🏥 Agregar Cobertura</div>
+        <div class="form-group">
+            <label>Documento del paciente</label>
+            <div class="input-row">
+                <input type="text" id="doc-cobertura" placeholder="Número de documento">
+                <button class="btn btn-secondary" onclick="buscarPacienteCobertura()">Buscar</button>
+            </div>
+        </div>
+        <div class="patient-banner" id="paciente-cobertura-info"></div>
+        <input type="hidden" id="id-paciente-cobertura">
+        <div class="form-row">
+            <div class="form-group">
+                <label>EPS</label>
+                <select id="eps-cobertura">
+                    <option value="">Selecciona una EPS</option>
+                    <option>Sura EPS</option><option>Sanitas EPS</option><option>Nueva EPS</option>
+                    <option>Compensar EPS</option><option>Famisanar EPS</option><option>Coosalud EPS</option><option>Medimas EPS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tipo de afiliación</label>
+                <select id="tipo-afiliacion">
+                    <option value="">Selecciona el tipo</option>
+                    <option>Contributivo</option><option>Subsidiado</option><option>Especial</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>N° Afiliado</label><input type="text" id="numero-afiliado" placeholder="Número de afiliado"></div>
+            <div class="form-group"><label>Fecha inicio</label><input type="date" id="fecha-inicio-cobertura"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Fecha fin (opcional)</label><input type="date" id="fecha-fin-cobertura"></div>
+            <div class="form-group"><label>Saldo disponible ($)</label><input type="number" id="saldo-cobertura" placeholder="0" min="0"></div>
+        </div>
+        <div class="form-group"><label>Copago (%)</label><input type="number" id="copago-cobertura" placeholder="0" min="0" max="100"></div>
+        <button class="btn btn-primary" onclick="agregarCobertura()">Agregar Cobertura</button>
+        <div class="msg" id="msg-cobertura"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">🔍 Ver Coberturas de un Paciente</div>
+        <div class="form-group">
+            <label>Documento del paciente</label>
+            <div class="input-row">
+                <input type="text" id="doc-ver-cobertura" placeholder="Número de documento">
+                <button class="btn btn-secondary" onclick="verCoberturas()">Buscar</button>
+            </div>
+        </div>
+        <div class="msg" id="msg-ver-cobertura"></div>
+        <table>
+            <thead><tr><th>EPS</th><th>Tipo</th><th>N° Afiliado</th><th>Inicio</th><th>Fin</th><th>Saldo</th><th>Copago</th><th>Vigencia</th><th>Acción</th></tr></thead>
+            <tbody id="tabla-coberturas">
+                <tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:20px;">Busca un paciente</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">💰 Actualizar Saldo de Cobertura</div>
+        <div class="form-group"><label>ID de la cobertura</label><input type="text" id="id-cobertura-saldo" placeholder="Pega el ID de la cobertura"></div>
+        <div class="form-group"><label>Nuevo saldo ($)</label><input type="number" id="nuevo-saldo" placeholder="0" min="0"></div>
+        <button class="btn btn-primary" onclick="actualizarSaldo()">Actualizar Saldo</button>
+        <div class="msg" id="msg-saldo"></div>
+    </div>
+
+    <!-- AUTORIZACIONES -->
+    <div class="section-label">Autorizaciones</div>
+    <div class="card">
+        <div class="card-title">📝 Solicitar Autorización</div>
+        <div class="form-group">
+            <label>Documento del paciente</label>
+            <div class="input-row">
+                <input type="text" id="doc-autorizacion" placeholder="Número de documento">
+                <button class="btn btn-secondary" onclick="buscarPacienteAutorizacion()">Buscar</button>
+            </div>
+        </div>
+        <div class="patient-banner" id="paciente-autorizacion-info"></div>
+        <input type="hidden" id="id-paciente-autorizacion">
+        <div class="form-group">
+            <label>Cobertura</label>
+            <select id="select-cobertura-autorizacion"><option value="">Primero busca un paciente</option></select>
+        </div>
+        <div class="form-group">
+            <label>Tipo de estudio</label>
+            <select id="tipo-estudio-autorizacion">
+                <option value="">Selecciona un estudio</option>
+                <option value="radiografia">Radiografía</option><option value="ecografia">Ecografía</option>
+                <option value="tomografia">Tomografía</option><option value="resonancia">Resonancia</option>
+                <option value="mamografia">Mamografía</option><option value="densitometria">Densitometría</option>
+                <option value="electrocardiograma">Electrocardiograma</option><option value="laboratorio">Laboratorio</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Monto autorizado ($)</label><input type="number" id="monto-autorizacion" placeholder="0" min="0"></div>
+            <div class="form-group"><label>Fecha vencimiento</label><input type="date" id="fecha-vencimiento-autorizacion"></div>
+        </div>
+        <div class="form-group"><label>Observaciones</label><textarea id="observaciones-autorizacion" placeholder="Observaciones opcionales..."></textarea></div>
+        <button class="btn btn-primary" onclick="solicitarAutorizacion()">Solicitar Autorización</button>
+        <div class="msg" id="msg-autorizacion"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">📂 Historial de Autorizaciones</div>
+        <div class="form-group">
+            <label>Documento del paciente</label>
+            <div class="input-row">
+                <input type="text" id="doc-ver-autorizacion" placeholder="Número de documento">
+                <button class="btn btn-secondary" onclick="verAutorizaciones()">Buscar</button>
+            </div>
+        </div>
+        <div class="msg" id="msg-ver-autorizacion"></div>
+        <table>
+            <thead><tr><th>Código</th><th>Estudio</th><th>EPS</th><th>Estado</th><th>Monto</th><th>Solicitud</th><th>Vencimiento</th></tr></thead>
+            <tbody id="tabla-autorizaciones">
+                <tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:20px;">Busca un paciente</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const usuarioActual = Auth.verificar(['admin']);
+    Auth.aplicarPermisos(usuarioActual);
+    document.getElementById('header-nombre').textContent = `${usuarioActual.nombre} ${usuarioActual.apellido}`;
+    document.getElementById('header-avatar').textContent = (usuarioActual.nombre[0] + usuarioActual.apellido[0]).toUpperCase();
+
+    const GATEWAY = 'https://movable-raging-ice.ngrok-free.dev';
+    const NH = { 'ngrok-skip-browser-warning': 'true' };
+
+    const verificarServicios = async () => {
+        const checks = [
+            { url: `${GATEWAY}/health`, dot: 'dot-gateway' },
+            { url: `${GATEWAY}/api/v1/pacientes/health/live`, dot: 'dot-pacientes' },
+        ];
+        await Promise.all(checks.map(async ({ url, dot }) => {
+            try { const r = await fetch(url, { headers: NH }); if (r.ok) document.getElementById(dot).classList.add('activo'); } catch {}
+        }));
+    };
+
+    const msg = (id, texto, tipo) => {
+        const el = document.getElementById(id);
+        el.textContent = texto; el.className = `msg ${tipo}`; el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 4000);
+    };
+
+    const buscarPacientePorDocumento = async (doc) => {
+        const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${doc}`, { headers: NH });
+        if (!res.ok) throw new Error();
+        return await res.json();
+    };
+
+    const crearPaciente = async () => {
+        const datos = {
+            nombre: document.getElementById('nombre').value,
+            apellido: document.getElementById('apellido').value,
+            documento: document.getElementById('documento').value,
+            fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+            telefono: document.getElementById('telefono').value,
+            email: document.getElementById('email').value
         };
- 
-        const mostrarMensaje = (id, texto, tipo) => {
-            const el = document.getElementById(id);
-            el.textContent = texto; el.className = `mensaje ${tipo}`; el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
-        };
- 
-        const buscarPacientePorDocumento = async (documento) => {
-            const res = await fetch(`${GATEWAY}/api/v1/pacientes/documento/${documento}`, { headers: NH });
-            if (!res.ok) throw new Error('Paciente no encontrado');
-            return await res.json();
-        };
- 
-        const crearPaciente = async () => {
-            const datos = {
-                nombre: document.getElementById('nombre').value,
-                apellido: document.getElementById('apellido').value,
-                documento: document.getElementById('documento').value,
-                fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
-                telefono: document.getElementById('telefono').value,
-                email: document.getElementById('email').value
-            };
-            if (!datos.nombre || !datos.apellido || !datos.documento || !datos.fecha_nacimiento || !datos.email) {
-                mostrarMensaje('msg-paciente', 'Por favor completa todos los campos obligatorios', 'error'); return;
-            }
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...NH },
-                    body: JSON.stringify(datos)
-                });
-                const data = await res.json();
-                if (res.ok) { mostrarMensaje('msg-paciente', 'Paciente registrado exitosamente', 'exito'); cargarPacientes(); }
-                else mostrarMensaje('msg-paciente', data.mensaje || 'Error al registrar', 'error');
-            } catch { mostrarMensaje('msg-paciente', 'No se pudo conectar con el servidor', 'error'); }
-        };
- 
-        const cargarPacientes = async () => {
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes`, { headers: NH });
-                const pacientes = await res.json();
-                const tbody = document.getElementById('tabla-pacientes');
-                if (!pacientes.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">No hay pacientes registrados</td></tr>'; return; }
-                tbody.innerHTML = pacientes.map(p => `<tr>
-                    <td>${p.nombre} ${p.apellido}</td>
-                    <td>${p.documento}</td>
-                    <td>${p.email}</td>
-                    <td>${p.telefono || '-'}</td>
-                    <td>${p.fecha_nacimiento}</td>
-                    <td style="font-size:11px;color:#999;">${p.id_paciente}</td>
-                </tr>`).join('');
-            } catch { document.getElementById('tabla-pacientes').innerHTML = '<tr><td colspan="6" style="text-align:center;color:red;">Error al cargar pacientes</td></tr>'; }
-        };
- 
-        const buscarPacienteCobertura = async () => {
-            const documento = document.getElementById('doc-cobertura').value.trim();
-            if (!documento) { mostrarMensaje('msg-cobertura', 'Escribe un número de documento', 'error'); return; }
-            try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                document.getElementById('paciente-cobertura-info').textContent = `${paciente.nombre} ${paciente.apellido} — Doc: ${paciente.documento}`;
-                document.getElementById('paciente-cobertura-info').classList.add('visible');
-                document.getElementById('id-paciente-cobertura').value = paciente.id_paciente;
-            } catch {
-                document.getElementById('paciente-cobertura-info').classList.remove('visible');
-                mostrarMensaje('msg-cobertura', 'No se encontró ningún paciente con ese documento', 'error');
-            }
-        };
- 
-        const agregarCobertura = async () => {
-            const id_paciente       = document.getElementById('id-paciente-cobertura').value;
-            const eps               = document.getElementById('eps-cobertura').value;
-            const tipo_afiliacion   = document.getElementById('tipo-afiliacion').value;
-            const numero_afiliado   = document.getElementById('numero-afiliado').value;
-            const fecha_inicio      = document.getElementById('fecha-inicio-cobertura').value;
-            const fecha_fin         = document.getElementById('fecha-fin-cobertura').value;
-            const saldo_disponible  = document.getElementById('saldo-cobertura').value;
-            const copago_porcentaje = document.getElementById('copago-cobertura').value;
-            if (!id_paciente) { mostrarMensaje('msg-cobertura', 'Primero busca un paciente', 'error'); return; }
-            if (!eps || !tipo_afiliacion || !numero_afiliado || !fecha_inicio) { mostrarMensaje('msg-cobertura', 'Por favor completa todos los campos obligatorios', 'error'); return; }
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes/${id_paciente}/coberturas`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...NH },
-                    body: JSON.stringify({ eps, tipo_afiliacion, numero_afiliado, fecha_inicio, fecha_fin: fecha_fin || null, saldo_disponible: saldo_disponible || 0, copago_porcentaje: copago_porcentaje || 0 })
-                });
-                const data = await res.json();
-                if (res.ok) mostrarMensaje('msg-cobertura', 'Cobertura agregada exitosamente', 'exito');
-                else mostrarMensaje('msg-cobertura', data.mensaje || 'Error al agregar', 'error');
-            } catch { mostrarMensaje('msg-cobertura', 'No se pudo conectar con el servidor', 'error'); }
-        };
- 
-        const verCoberturas = async () => {
-            const documento = document.getElementById('doc-ver-cobertura').value.trim();
-            if (!documento) { mostrarMensaje('msg-ver-cobertura', 'Escribe un número de documento', 'error'); return; }
-            try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes/${paciente.id_paciente}/coberturas`, { headers: NH });
-                const data = await res.json();
-                const tbody = document.getElementById('tabla-coberturas');
-                if (!data.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">No hay coberturas registradas</td></tr>'; return; }
-                tbody.innerHTML = data.map(c => `<tr>
-                    <td>${c.eps}</td><td>${c.tipo_afiliacion}</td><td>${c.numero_afiliado}</td>
-                    <td>${c.fecha_inicio}</td><td>${c.fecha_fin || 'Indefinida'}</td>
-                    <td>$${parseFloat(c.saldo_disponible).toLocaleString()}</td>
-                    <td>${c.copago_porcentaje}%</td>
-                    <td><span class="badge ${c.vigencia.vigente ? 'vigente' : 'vencida'}">${c.vigencia.vigente ? 'Vigente' : 'Vencida'}</span></td>
-                    <td><button onclick="verificarVigencia('${c.id_cobertura}')" style="width:auto;padding:5px 10px;font-size:12px;margin-top:0;">Verificar</button></td>
-                </tr>`).join('');
-            } catch { mostrarMensaje('msg-ver-cobertura', 'No se encontró el paciente', 'error'); }
-        };
- 
-        const verificarVigencia = async (id_cobertura) => {
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes/coberturas/${id_cobertura}/verificar`, { headers: NH });
-                const data = await res.json();
-                if (res.ok) alert(`Cobertura: ${data.cobertura.eps}\nEstado: ${data.vigencia.motivo}`);
-                else alert(data.mensaje || 'Error al verificar');
-            } catch { alert('No se pudo conectar con el servidor'); }
-        };
- 
-        const actualizarSaldo = async () => {
-            const id_cobertura     = document.getElementById('id-cobertura-saldo').value.trim();
-            const saldo_disponible = document.getElementById('nuevo-saldo').value;
-            if (!id_cobertura) { mostrarMensaje('msg-saldo', 'Ingresa el ID de la cobertura', 'error'); return; }
-            if (saldo_disponible === '') { mostrarMensaje('msg-saldo', 'Ingresa el nuevo saldo', 'error'); return; }
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes/coberturas/${id_cobertura}/saldo`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', ...NH },
-                    body: JSON.stringify({ saldo_disponible: parseFloat(saldo_disponible) })
-                });
-                const data = await res.json();
-                if (res.ok) mostrarMensaje('msg-saldo', 'Saldo actualizado exitosamente', 'exito');
-                else mostrarMensaje('msg-saldo', data.mensaje || 'Error al actualizar', 'error');
-            } catch { mostrarMensaje('msg-saldo', 'No se pudo conectar con el servidor', 'error'); }
-        };
- 
-        const buscarPacienteAutorizacion = async () => {
-            const documento = document.getElementById('doc-autorizacion').value.trim();
-            if (!documento) { mostrarMensaje('msg-autorizacion', 'Escribe un número de documento', 'error'); return; }
-            try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                document.getElementById('paciente-autorizacion-info').textContent = `${paciente.nombre} ${paciente.apellido} — Doc: ${paciente.documento}`;
-                document.getElementById('paciente-autorizacion-info').classList.add('visible');
-                document.getElementById('id-paciente-autorizacion').value = paciente.id_paciente;
-                const resCob = await fetch(`${GATEWAY}/api/v1/pacientes/${paciente.id_paciente}/coberturas`, { headers: NH });
-                const coberturas = await resCob.json();
-                const sel = document.getElementById('select-cobertura-autorizacion');
-                if (!coberturas.length) sel.innerHTML = '<option value="">Este paciente no tiene coberturas</option>';
-                else sel.innerHTML = '<option value="">Selecciona una cobertura</option>' +
-                    coberturas.filter(c => c.vigencia.vigente).map(c =>
-                        `<option value="${c.id_cobertura}">${c.eps} — ${c.tipo_afiliacion} — Saldo: $${parseFloat(c.saldo_disponible).toLocaleString()}</option>`
-                    ).join('');
-            } catch {
-                document.getElementById('paciente-autorizacion-info').classList.remove('visible');
-                mostrarMensaje('msg-autorizacion', 'No se encontró ningún paciente con ese documento', 'error');
-            }
-        };
- 
-        const solicitarAutorizacion = async () => {
-            const id_paciente       = document.getElementById('id-paciente-autorizacion').value;
-            const id_cobertura      = document.getElementById('select-cobertura-autorizacion').value;
-            const tipo_estudio      = document.getElementById('tipo-estudio-autorizacion').value;
-            const monto_autorizado  = document.getElementById('monto-autorizacion').value;
-            const fecha_vencimiento = document.getElementById('fecha-vencimiento-autorizacion').value;
-            const observaciones     = document.getElementById('observaciones-autorizacion').value;
-            if (!id_paciente) { mostrarMensaje('msg-autorizacion', 'Primero busca un paciente', 'error'); return; }
-            if (!id_cobertura || !tipo_estudio) { mostrarMensaje('msg-autorizacion', 'Selecciona una cobertura y un tipo de estudio', 'error'); return; }
-            try {
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes/${id_paciente}/coberturas/autorizaciones`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...NH },
-                    body: JSON.stringify({ id_cobertura, tipo_estudio, monto_autorizado: monto_autorizado || null, fecha_vencimiento: fecha_vencimiento || null, observaciones: observaciones || null })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    mostrarMensaje('msg-autorizacion', `Autorización aprobada. Código: ${data.autorizacion.codigo_autorizacion}`, 'exito');
-                    document.getElementById('observaciones-autorizacion').value = '';
-                    document.getElementById('monto-autorizacion').value = '';
-                } else mostrarMensaje('msg-autorizacion', data.mensaje || 'Error al solicitar', 'error');
-            } catch { mostrarMensaje('msg-autorizacion', 'No se pudo conectar con el servidor', 'error'); }
-        };
- 
-        const verAutorizaciones = async () => {
-            const documento = document.getElementById('doc-ver-autorizacion').value.trim();
-            if (!documento) { mostrarMensaje('msg-ver-autorizacion', 'Escribe un número de documento', 'error'); return; }
-            try {
-                const paciente = await buscarPacientePorDocumento(documento);
-                const res = await fetch(`${GATEWAY}/api/v1/pacientes/${paciente.id_paciente}/coberturas/autorizaciones`, { headers: NH });
-                const data = await res.json();
-                const tbody = document.getElementById('tabla-autorizaciones');
-                if (!res.ok || !data.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">No hay autorizaciones registradas</td></tr>'; return; }
-                tbody.innerHTML = data.map(a => `<tr>
-                    <td style="font-size:11px;">${a.codigo_autorizacion}</td>
-                    <td>${a.tipo_estudio}</td><td>${a.id_cobertura}</td>
-                    <td><span class="badge ${a.estado.toLowerCase()}">${a.estado}</span></td>
-                    <td>${a.monto_autorizado ? '$' + parseFloat(a.monto_autorizado).toLocaleString() : '-'}</td>
-                    <td>${a.fecha_solicitud}</td><td>${a.fecha_vencimiento || 'Sin vencimiento'}</td>
-                </tr>`).join('');
-            } catch { mostrarMensaje('msg-ver-autorizacion', 'No se encontró el paciente', 'error'); }
-        };
- 
-        verificarServicios();
-        cargarPacientes();
-    </script>
+        if (!datos.nombre || !datos.apellido || !datos.documento || !datos.fecha_nacimiento || !datos.email) {
+            msg('msg-paciente', 'Completa todos los campos obligatorios', 'error'); return;
+        }
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...NH }, body: JSON.stringify(datos) });
+            const data = await res.json();
+            if (res.ok) { msg('msg-paciente', 'Paciente registrado exitosamente', 'exito'); cargarPacientes(); }
+            else msg('msg-paciente', data.mensaje || 'Error al registrar', 'error');
+        } catch { msg('msg-paciente', 'No se pudo conectar', 'error'); }
+    };
+
+    const cargarPacientes = async () => {
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes`, { headers: NH });
+            const pacientes = await res.json();
+            const tbody = document.getElementById('tabla-pacientes');
+            if (!pacientes.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:20px;">No hay pacientes registrados</td></tr>'; return; }
+            tbody.innerHTML = pacientes.map(p => `<tr>
+                <td><strong>${p.nombre} ${p.apellido}</strong></td>
+                <td>${p.documento}</td><td>${p.email}</td>
+                <td>${p.telefono || '—'}</td><td>${p.fecha_nacimiento}</td>
+                <td style="font-size:11px;color:#94a3b8;font-family:monospace;">${p.id_paciente.slice(0,12)}...</td>
+            </tr>`).join('');
+        } catch { document.getElementById('tabla-pacientes').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#dc2626;">Error al cargar</td></tr>'; }
+    };
+
+    const buscarPacienteCobertura = async () => {
+        const doc = document.getElementById('doc-cobertura').value.trim();
+        if (!doc) { msg('msg-cobertura', 'Escribe un documento', 'error'); return; }
+        try {
+            const p = await buscarPacientePorDocumento(doc);
+            const banner = document.getElementById('paciente-cobertura-info');
+            banner.textContent = `✓ ${p.nombre} ${p.apellido} — Doc: ${p.documento}`;
+            banner.classList.add('visible');
+            document.getElementById('id-paciente-cobertura').value = p.id_paciente;
+        } catch {
+            document.getElementById('paciente-cobertura-info').classList.remove('visible');
+            msg('msg-cobertura', 'Paciente no encontrado', 'error');
+        }
+    };
+
+    const agregarCobertura = async () => {
+        const id_paciente = document.getElementById('id-paciente-cobertura').value;
+        const eps = document.getElementById('eps-cobertura').value;
+        const tipo_afiliacion = document.getElementById('tipo-afiliacion').value;
+        const numero_afiliado = document.getElementById('numero-afiliado').value;
+        const fecha_inicio = document.getElementById('fecha-inicio-cobertura').value;
+        const fecha_fin = document.getElementById('fecha-fin-cobertura').value;
+        const saldo_disponible = document.getElementById('saldo-cobertura').value;
+        const copago_porcentaje = document.getElementById('copago-cobertura').value;
+        if (!id_paciente) { msg('msg-cobertura', 'Primero busca un paciente', 'error'); return; }
+        if (!eps || !tipo_afiliacion || !numero_afiliado || !fecha_inicio) { msg('msg-cobertura', 'Completa los campos obligatorios', 'error'); return; }
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes/${id_paciente}/coberturas`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', ...NH },
+                body: JSON.stringify({ eps, tipo_afiliacion, numero_afiliado, fecha_inicio, fecha_fin: fecha_fin || null, saldo_disponible: saldo_disponible || 0, copago_porcentaje: copago_porcentaje || 0 })
+            });
+            const data = await res.json();
+            if (res.ok) msg('msg-cobertura', 'Cobertura agregada exitosamente', 'exito');
+            else msg('msg-cobertura', data.mensaje || 'Error', 'error');
+        } catch { msg('msg-cobertura', 'No se pudo conectar', 'error'); }
+    };
+
+    const verCoberturas = async () => {
+        const doc = document.getElementById('doc-ver-cobertura').value.trim();
+        if (!doc) { msg('msg-ver-cobertura', 'Escribe un documento', 'error'); return; }
+        try {
+            const p = await buscarPacientePorDocumento(doc);
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes/${p.id_paciente}/coberturas`, { headers: NH });
+            const data = await res.json();
+            const tbody = document.getElementById('tabla-coberturas');
+            if (!data.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:16px;">Sin coberturas</td></tr>'; return; }
+            tbody.innerHTML = data.map(c => `<tr>
+                <td><strong>${c.eps}</strong></td><td>${c.tipo_afiliacion}</td><td>${c.numero_afiliado}</td>
+                <td>${c.fecha_inicio}</td><td>${c.fecha_fin || 'Indefinida'}</td>
+                <td>$${parseFloat(c.saldo_disponible).toLocaleString()}</td>
+                <td>${c.copago_porcentaje}%</td>
+                <td><span class="badge ${c.vigencia.vigente ? 'vigente' : 'vencida'}">${c.vigencia.vigente ? 'Vigente' : 'Vencida'}</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="verificarVigencia('${c.id_cobertura}')">Verificar</button></td>
+            </tr>`).join('');
+        } catch { msg('msg-ver-cobertura', 'Paciente no encontrado', 'error'); }
+    };
+
+    const verificarVigencia = async (id) => {
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes/coberturas/${id}/verificar`, { headers: NH });
+            const data = await res.json();
+            if (res.ok) alert(`Cobertura: ${data.cobertura.eps}\nEstado: ${data.vigencia.motivo}`);
+            else alert(data.mensaje || 'Error');
+        } catch { alert('No se pudo conectar'); }
+    };
+
+    const actualizarSaldo = async () => {
+        const id = document.getElementById('id-cobertura-saldo').value.trim();
+        const saldo = document.getElementById('nuevo-saldo').value;
+        if (!id) { msg('msg-saldo', 'Ingresa el ID de la cobertura', 'error'); return; }
+        if (saldo === '') { msg('msg-saldo', 'Ingresa el nuevo saldo', 'error'); return; }
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes/coberturas/${id}/saldo`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json', ...NH },
+                body: JSON.stringify({ saldo_disponible: parseFloat(saldo) })
+            });
+            const data = await res.json();
+            if (res.ok) msg('msg-saldo', 'Saldo actualizado exitosamente', 'exito');
+            else msg('msg-saldo', data.mensaje || 'Error', 'error');
+        } catch { msg('msg-saldo', 'No se pudo conectar', 'error'); }
+    };
+
+    const buscarPacienteAutorizacion = async () => {
+        const doc = document.getElementById('doc-autorizacion').value.trim();
+        if (!doc) { msg('msg-autorizacion', 'Escribe un documento', 'error'); return; }
+        try {
+            const p = await buscarPacientePorDocumento(doc);
+            const banner = document.getElementById('paciente-autorizacion-info');
+            banner.textContent = `✓ ${p.nombre} ${p.apellido} — Doc: ${p.documento}`;
+            banner.classList.add('visible');
+            document.getElementById('id-paciente-autorizacion').value = p.id_paciente;
+            const resCob = await fetch(`${GATEWAY}/api/v1/pacientes/${p.id_paciente}/coberturas`, { headers: NH });
+            const coberturas = await resCob.json();
+            const sel = document.getElementById('select-cobertura-autorizacion');
+            if (!coberturas.length) sel.innerHTML = '<option>Sin coberturas activas</option>';
+            else sel.innerHTML = '<option value="">Selecciona una cobertura</option>' +
+                coberturas.filter(c => c.vigencia.vigente).map(c =>
+                    `<option value="${c.id_cobertura}">${c.eps} — ${c.tipo_afiliacion} — $${parseFloat(c.saldo_disponible).toLocaleString()}</option>`
+                ).join('');
+        } catch {
+            document.getElementById('paciente-autorizacion-info').classList.remove('visible');
+            msg('msg-autorizacion', 'Paciente no encontrado', 'error');
+        }
+    };
+
+    const solicitarAutorizacion = async () => {
+        const id_paciente = document.getElementById('id-paciente-autorizacion').value;
+        const id_cobertura = document.getElementById('select-cobertura-autorizacion').value;
+        const tipo_estudio = document.getElementById('tipo-estudio-autorizacion').value;
+        const monto_autorizado = document.getElementById('monto-autorizacion').value;
+        const fecha_vencimiento = document.getElementById('fecha-vencimiento-autorizacion').value;
+        const observaciones = document.getElementById('observaciones-autorizacion').value;
+        if (!id_paciente) { msg('msg-autorizacion', 'Primero busca un paciente', 'error'); return; }
+        if (!id_cobertura || !tipo_estudio) { msg('msg-autorizacion', 'Selecciona cobertura y estudio', 'error'); return; }
+        try {
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes/${id_paciente}/coberturas/autorizaciones`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', ...NH },
+                body: JSON.stringify({ id_cobertura, tipo_estudio, monto_autorizado: monto_autorizado || null, fecha_vencimiento: fecha_vencimiento || null, observaciones: observaciones || null })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                msg('msg-autorizacion', `Autorización aprobada. Código: ${data.autorizacion.codigo_autorizacion}`, 'exito');
+                document.getElementById('observaciones-autorizacion').value = '';
+                document.getElementById('monto-autorizacion').value = '';
+            } else msg('msg-autorizacion', data.mensaje || 'Error', 'error');
+        } catch { msg('msg-autorizacion', 'No se pudo conectar', 'error'); }
+    };
+
+    const verAutorizaciones = async () => {
+        const doc = document.getElementById('doc-ver-autorizacion').value.trim();
+        if (!doc) { msg('msg-ver-autorizacion', 'Escribe un documento', 'error'); return; }
+        try {
+            const p = await buscarPacientePorDocumento(doc);
+            const res = await fetch(`${GATEWAY}/api/v1/pacientes/${p.id_paciente}/coberturas/autorizaciones`, { headers: NH });
+            const data = await res.json();
+            const tbody = document.getElementById('tabla-autorizaciones');
+            if (!res.ok || !data.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:16px;">Sin autorizaciones</td></tr>'; return; }
+            tbody.innerHTML = data.map(a => `<tr>
+                <td style="font-size:11px;font-family:monospace;">${a.codigo_autorizacion}</td>
+                <td>${a.tipo_estudio}</td><td>${a.id_cobertura}</td>
+                <td><span class="badge ${a.estado.toLowerCase()}">${a.estado}</span></td>
+                <td>${a.monto_autorizado ? '$' + parseFloat(a.monto_autorizado).toLocaleString() : '—'}</td>
+                <td>${a.fecha_solicitud}</td><td>${a.fecha_vencimiento || 'Sin vencimiento'}</td>
+            </tr>`).join('');
+        } catch { msg('msg-ver-autorizacion', 'Paciente no encontrado', 'error'); }
+    };
+
+    verificarServicios();
+    cargarPacientes();
+</script>
 </body>
 </html>
