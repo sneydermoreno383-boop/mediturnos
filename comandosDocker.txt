@@ -34,3 +34,14 @@ juan1234
 iniciar pruebas 
 npm run test:coverage
 
+inicar ngrok 
+Get-ChildItem -Path . -Recurse -Include "*.html" | ForEach-Object { (Get-Content $_.FullName) -replace 'https://movable-raging-ice.ngrok-free.dev', 'https://NUEVA-URL-AQUI.ngrok-free.app' | Set-Content $_.FullName
+
+actualizar git hub 
+git add .
+git commit -m "fix: actualizar URL ngrok"
+git push origin main
+
+ngrok 
+ngrok config add-authtoken 3DHZAEPbdCdaAZ2O2iC7zQ0RbHu_7P2dBdeLapb3DiVNwxc1d
+ngrok http 80
