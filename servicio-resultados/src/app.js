@@ -8,6 +8,10 @@ const resultadoRoutes = require('./routes/resultadoRoutes');
 const Resultado = require('./models/Resultado');
 const Imagen = require('./models/Imagen');
 
+// ─── OBSERVABILIDAD ───────────────────────────────────────────────────────────
+const { client, metricsMiddleware } = require('./observability');
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Asociaciones entre modelos
 Resultado.hasMany(Imagen, { foreignKey: 'id_resultado', as: 'imagenes' });
 Imagen.belongsTo(Resultado, { foreignKey: 'id_resultado', as: 'resultado' });
@@ -15,6 +19,10 @@ Imagen.belongsTo(Resultado, { foreignKey: 'id_resultado', as: 'resultado' });
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ─── MIDDLEWARE DE MÉTRICAS (antes de las rutas) ──────────────────────────────
+app.use(metricsMiddleware('servicio-resultados'));
+// ─────────────────────────────────────────────────────────────────────────────
 
 // Crear carpeta de uploads si no existe
 const uploadsDir = '/app/uploads';
@@ -99,6 +107,13 @@ const iniciarJobRetencion = () => {
   setInterval(ejecutarLimpiezaRetencion, 24 * 60 * 60 * 1000);
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── ENDPOINT DE MÉTRICAS (Prometheus lo consulta aquí) ──────────────────────
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
+});
 // ─────────────────────────────────────────────────────────────────────────────
 
 const PORT = process.env.PORT || 3003;

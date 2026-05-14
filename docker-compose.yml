@@ -239,6 +239,33 @@ services:
       - db-notificaciones
       - db-facturacion
 
+  # ─── MONITOREO ────────────────────────────────────────────────────────────────
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: on-failure
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3100:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin1234
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: on-failure
+
+  # ─────────────────────────────────────────────────────────────────────────────
+
 # Volúmenes
 volumes:
   datos-pacientes:
@@ -248,3 +275,4 @@ volumes:
   datos-auth:
   datos-facturacion:
   uploads-resultados:
+  grafana_data:       

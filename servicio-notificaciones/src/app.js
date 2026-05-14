@@ -6,15 +6,31 @@ const notificacionRoutes = require('./routes/notificacionRoutes');
 const { crearPlantillasIniciales } = require('./services/plantillaService');
 const { iniciarWorker } = require('./workers/recordatorioWorker');
 
+
+// ─── OBSERVABILIDAD ───────────────────────────────────────────────────────────
+const { client, metricsMiddleware } = require('./observability');
+// ─────────────────────────────────────────────────────────────────────────────
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ─── MIDDLEWARE DE MÉTRICAS (antes de las rutas) ──────────────────────────────
+app.use(metricsMiddleware('servicio-notificaciones'));
+// ─────────────────────────────────────────────────────────────────────────────
 
 app.use('/api/v1/notificaciones', notificacionRoutes);
 
 app.get('/health/live', (req, res) => {
   res.status(200).json({ estado: 'activo', servicio: 'servicio-notificaciones' });
 });
+
+// ─── ENDPOINT DE MÉTRICAS (Prometheus lo consulta aquí) ──────────────────────
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
+});
+// ─────────────────────────────────────────────────────────────────────────────
 
 const PORT = process.env.PORT || 3004;
 

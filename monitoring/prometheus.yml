@@ -1,0 +1,32 @@
+# monitoring/prometheus.yml
+# Prometheus visita cada servicio cada 15 segundos para recolectar métricas
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+
+  - job_name: 'servicio-pacientes'
+    static_configs:
+      - targets: ['servicio-pacientes:3001']
+
+  - job_name: 'servicio-agenda'
+    static_configs:
+      - targets: ['servicio-agenda:3002']
+
+  - job_name: 'servicio-resultados'
+    static_configs:
+      - targets: ['servicio-resultados:3003']
+
+  - job_name: 'servicio-notificaciones'
+    static_configs:
+      - targets: ['servicio-notificaciones:3004']
+
+  - job_name: 'servicio-auth'
+    static_configs:
+      - targets: ['servicio-auth:3005']
+
+  - job_name: 'servicio-facturacion'
+    static_configs:
+      - targets: ['servicio-facturacion:3006']
