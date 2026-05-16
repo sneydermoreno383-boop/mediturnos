@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" id="favicon" type="image/x-icon">
+    <script>
+    (function() {
+        const img = new Image();
+        img.onload = function() {
+            const c = document.createElement('canvas');
+            c.width = c.height = 32;
+            c.getContext('2d').drawImage(img, 0, 0, 32, 32);
+            document.getElementById('favicon').href = c.toDataURL('image/png');
+        };
+        // Toma la imagen del logo que ya existe en la página
+        window.addEventListener('DOMContentLoaded', function() {
+            const logoImg = document.querySelector('img.logo-img, img[alt="MediTurnos"]');
+            if (logoImg) img.src = logoImg.src;
+        });
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediTurnos — Sistema</title>
@@ -41,6 +58,14 @@
         .header-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .logo { font-family: 'Playfair Display', serif; font-size: 22px; color: white; text-decoration: none; }
         .logo span { color: #90caf9; }
+        .logo-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
         .header-nav { display: flex; gap: 4px; }
         .nav-link { color: rgba(255,255,255,0.7); font-size: 13px; padding: 7px 14px; border-radius: 20px; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; }
         .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.2); }

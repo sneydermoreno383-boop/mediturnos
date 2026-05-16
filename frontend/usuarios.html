@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" id="favicon" type="image/x-icon">
+    <script>
+    (function() {
+        const img = new Image();
+        img.onload = function() {
+            const c = document.createElement('canvas');
+            c.width = c.height = 32;
+            c.getContext('2d').drawImage(img, 0, 0, 32, 32);
+            document.getElementById('favicon').href = c.toDataURL('image/png');
+        };
+        // Toma la imagen del logo que ya existe en la página
+        window.addEventListener('DOMContentLoaded', function() {
+            const logoImg = document.querySelector('img.logo-img, img[alt="MediTurnos"]');
+            if (logoImg) img.src = logoImg.src;
+        });
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediTurnos — Usuarios</title>
